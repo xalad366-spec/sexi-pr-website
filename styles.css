@@ -5042,7 +5042,7 @@ body.theme-light .manifesto--preview .manifesto__sub {
 .footer__bottom .x-mark { line-height: 1; }
 .footer__bottom .x-mark::after {
   top: -0.25em;
-  left: 50%;
+  left: 58%;
   font-size: 0.95em;
   transform: translate(-50%, 0) rotate(-4deg);
 }
