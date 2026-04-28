@@ -5041,7 +5041,8 @@ body.theme-light .manifesto--preview .manifesto__sub {
    only nudge top + center horizontally because the X is uppercase here. === */
 .footer__bottom .x-mark { line-height: 1; }
 .footer__bottom .x-mark::after {
-  top: -0.5em;
+  top: -0.25em;
   left: 50%;
   font-size: 0.95em;
+  transform: translate(-50%, 0) rotate(-4deg);
 }
