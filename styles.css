@@ -4483,7 +4483,34 @@ body.theme-light .manifesto__eyebrow {
     line-height: 1.2 !important;
     text-decoration: none !important;
     text-align: left !important;
-    color: #FFF
+    color: #FFFFFF !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .nav.nav--menu-open .nav__menu .nav__link:active,
+  .nav.nav--menu-open .nav__menu .nav__link[aria-current="page"] {
+    background: rgba(255, 26, 140, 0.18) !important;
+    color: #FF1A8C !important;
+  }
+  .nav.nav--menu-open .nav__menu .nav__link::after { display: none !important; }
+  /* Light theme: invert background + text so it's readable in light mode too */
+  body.theme-light .nav.nav--menu-open > nav,
+  body.theme-light .nav.nav--menu-open .nav__menu {
+    background: #FFFFFF !important;
+  }
+  body.theme-light .nav.nav--menu-open .nav__menu li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  }
+  body.theme-light .nav.nav--menu-open .nav__menu .nav__link {
+    color: #000000 !important;
+    background: transparent !important;
+  }
+  body.theme-light .nav.nav--menu-open .nav__menu .nav__link:active,
+  body.theme-light .nav.nav--menu-open .nav__menu .nav__link[aria-current="page"] {
+    background: rgba(255, 26, 140, 0.12) !important;
+    color: #FF1A8C !important;
+  }
+}
 /* ============================================================
    Drive change list — commit B (#6, #7, #8)
    ============================================================ */
