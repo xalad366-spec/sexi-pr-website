@@ -3144,20 +3144,20 @@ body.modal-open { overflow: hidden; }
    inner left edge, so the layout matches the playground 1:1 on iPhone-13
    width and gracefully degrades on wider/narrower phones. */
 @media (max-width: 640px) {
-  /* Full-bleed on phones: kill the outer page gutter and side borders so
-     the modal inner === full viewport width, matching the playground canvas. */
+  /* Centered card on phones (Drive change #10):
+     - small viewport padding on all sides so modal looks like a card
+     - margin: auto 0 vertically centers when content fits, top-aligns otherwise
+     - extra bottom padding inside inner so CTA has breathing room below */
   .article-modal {
-    padding: 0;
+    padding: 16px 10px;
   }
   .article-modal.is-product .article-modal__inner {
     max-width: 100%;
     width: 100%;
-    padding: 0;
-    margin: 0 0 24px 0;
-    border-left: 0;
-    border-right: 0;
-    border-top-width: 2px;
-    border-bottom: 0;
+    padding: 0 0 32px 0;
+    margin: auto 0;
+    border: 2px solid var(--pink);
+    border-bottom: 2px solid var(--pink);
   }
 
   /* Close button (top-right) */
