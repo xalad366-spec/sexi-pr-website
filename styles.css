@@ -5035,3 +5035,14 @@ body.theme-light .manifesto--preview .manifesto__sub {
   .product-lightbox { display: none !important; }
   .article-modal.is-product .product-slide img { cursor: default; }
 }
+
+
+/* === Footer copyright x-mark accent — at 10 px text the global accent
+   is invisible (sits inside the X cap). Push it up + scale up. === */
+.footer__bottom .x-mark { line-height: 1; }
+.footer__bottom .x-mark::after {
+  top: -0.62em;
+  left: 50%;
+  font-size: 1.45em;
+  font-weight: 700;
+}
