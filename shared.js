@@ -258,6 +258,10 @@
     var imageEdges = (node.images && node.images.edges) || [];
     var images = imageEdges.map(function (e) { return e.node.url; }).filter(Boolean);
     var featured = (node.featuredImage && node.featuredImage.url) || images[0] || 'assets/01-brand/logo-01.png';
+    // gallery should be the OTHER images (everything except the featured one),
+    // so the modal carousel doesn't show the featured image twice when it
+    // builds [thumbnail, ...gallery].
+    var galleryRest = images.filter(function (u) { return u !== featured; });
     // Tags-derived flags
     var tags = node.tags || [];
     var headliner = tags.indexOf('headliner') !== -1 || tags.indexOf('featured') !== -1;
@@ -283,7 +287,7 @@
       name_html: brandNameHtml(title),
       price: price,
       thumbnail: featured,
-      gallery: images.length ? images : [featured],
+      gallery: galleryRest,
       sizes: sizes.length ? sizes : ['única'],
       category: category,
       headliner: headliner,
@@ -539,9 +543,17 @@
       // Product — render a swipeable carousel of [thumb, ...gallery] images.
       videoEl.innerHTML = '';
       videoEl.style.display = 'none';
-      const allImgs = [img].concat(
+      const rawImgs = [img].concat(
         (gallery || '').split(',').map(s => s.trim()).filter(Boolean)
       ).filter(Boolean);
+      // Dedupe — if gallery still contains the thumbnail (or any URL appears twice),
+      // keep only the first occurrence so the carousel never shows the same photo back-to-back.
+      const seen = new Set();
+      const allImgs = rawImgs.filter(function (u) {
+        if (seen.has(u)) return false;
+        seen.add(u);
+        return true;
+      });
       if (allImgs.length) {
         thumbEl.innerHTML = [
           '<div class="product-strip">',
