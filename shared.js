@@ -529,10 +529,44 @@
     deckEl.textContent = deck;
     deckEl.style.display = deck ? '' : 'none';
 
-    // Video embed OR thumb (video takes priority)
+    // Video embed OR thumb (video takes priority) — articles only.
     const videoEl = modal.querySelector('.article-modal__video');
     const thumbEl = modal.querySelector('.article-modal__thumb');
-    if (video) {
+    const isProduct = !!card.getAttribute('data-product-id');
+    modal.classList.toggle('is-product', isProduct);
+
+    if (isProduct) {
+      // Product — render a swipeable carousel of [thumb, ...gallery] images.
+      videoEl.innerHTML = '';
+      videoEl.style.display = 'none';
+      const allImgs = [img].concat(
+        (gallery || '').split(',').map(s => s.trim()).filter(Boolean)
+      ).filter(Boolean);
+      if (allImgs.length) {
+        thumbEl.innerHTML = [
+          '<div class="product-strip">',
+          allImgs.map(src => '<div class="product-slide"><img src="' + src + '" alt="" loading="lazy"></div>').join(''),
+          '</div>',
+          allImgs.length > 1 ? [
+            '<div class="product-dots">',
+            allImgs.map((_, i) => '<span class="product-dot' + (i === 0 ? ' is-active' : '') + '"></span>').join(''),
+            '</div>'
+          ].join('') : ''
+        ].join('');
+        thumbEl.style.display = '';
+        // Wire up dots → strip scroll position
+        const strip = thumbEl.querySelector('.product-strip');
+        const dots = thumbEl.querySelectorAll('.product-dot');
+        if (strip && dots.length) {
+          strip.addEventListener('scroll', () => {
+            const i = Math.round(strip.scrollLeft / strip.clientWidth);
+            dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
+          });
+        }
+      } else {
+        thumbEl.style.display = 'none';
+      }
+    } else if (video) {
       videoEl.innerHTML = '<iframe src="' + video + '" title="' + title.replace(/"/g, '') + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
       videoEl.style.display = '';
       thumbEl.style.display = 'none';
@@ -540,6 +574,10 @@
       videoEl.innerHTML = '';
       videoEl.style.display = 'none';
       if (img) {
+        // Reset any leftover product-strip markup from a previous open
+        if (thumbEl.querySelector('.product-strip')) {
+          thumbEl.innerHTML = '<img alt="">';
+        }
         thumbEl.querySelector('img').src = img;
         thumbEl.querySelector('img').alt = title.replace(/<[^>]+>/g, '');
         thumbEl.style.display = '';
