@@ -1,0 +1,6 @@
+# sexí preview — client review only, not the real production site.
+# Keep search engines out of the sexi-pr.pages.dev subdomain. Once the
+# custom sexipr.com domain is wired, this file will be replaced with one
+# that allows indexing of the real shop.
+User-agent: *
+Disallow: /

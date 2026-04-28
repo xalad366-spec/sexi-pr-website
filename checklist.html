@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="robots" content="noindex,nofollow">
+  <title>sexí · launch checklist</title>
+  <style>
+    @font-face {
+      font-family: 'Helvetica Rounded Bold';
+      font-weight: 100 900;
+      font-display: swap;
+      src: url('assets/fonts/HelveticaRoundedBold.woff2') format('woff2'),
+           url('assets/fonts/HelveticaRoundedBold.woff') format('woff'),
+           url('assets/fonts/HelveticaRoundedBold.otf') format('opentype'),
+           local('Helvetica Rounded Bold');
+    }
+
+    :root {
+      --pink: #FF1A8C;
+      --pink-soft: #ff1a8c22;
+      --black: #000000;
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface-2: #1f1f1f;
+      --text: #f0f0f0;
+      --text-dim: #888;
+      --text-faded: #555;
+      --border: #2a2a2a;
+      --green: #4ade80;
+      --orange: #fb923c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Helvetica Rounded Bold', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* === HEADER === */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px env(safe-area-inset-top);
+    }
+    .header-row { display: flex; align-items: center; gap: 10px; }
+    .brand {
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+    .brand .x-mark { color: var(--pink); position: relative; top: -1px; }
+    .header-title {
+      font-size: 14px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex: 1;
+      text-align: right;
+    }
+
+    .progress-wrap {
+      margin-top: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--surface-2);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--pink), #ff5fb3);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-num {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-variant-numeric: tabular-nums;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* === TABS === */
+    nav.tabs {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 4px;
+      padding: 12px 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 84px;
+      z-index: 40;
+      -webkit-overflow-scrolling: touch;
+    }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: lowercase;
+      color: var(--text-dim);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--bg);
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+    .tab-counter {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 11px;
+      color: var(--text-faded);
+      font-variant-numeric: tabular-nums;
+    }
+    .tab.active .tab-counter { color: rgba(0,0,0,0.6); }
+
+    /* === SECTION === */
+    main { padding: 0 18px 80px; max-width: 720px; margin: 0 auto; }
+    section { display: none; padding: 24px 0; }
+    section.active { display: block; }
+    section h2 {
+      font-size: 24px;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+    section h2 .pink { color: var(--pink); }
+    section .subtitle {
+      color: var(--text-dim);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    section h3 {
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin: 28px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    section h3:first-of-type { margin-top: 0; }
+
+    section .note {
+      background: var(--surface);
+      border-left: 3px solid var(--pink);
+      padding: 14px 16px;
+      margin: 14px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+    section .note strong { color: var(--text); }
+
+    /* === CHECKLIST ITEMS === */
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .item:last-child { border-bottom: none; }
+    .item:active { background: var(--surface); }
+
+    .checkbox {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border: 2px solid var(--text-dim);
+      border-radius: 6px;
+      margin-top: 2px;
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+      background: transparent;
+    }
+    .item.checked .checkbox {
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+    .item.checked .checkbox::after {
+      content: '';
+      width: 6px; height: 11px;
+      border: solid var(--bg);
+      border-width: 0 2.5px 2.5px 0;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+    .item-text {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .item.checked .item-text {
+      color: var(--text-faded);
+      text-decoration: line-through;
+      text-decoration-color: var(--text-faded);
+    }
+    .item-text code {
+      background: var(--surface-2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 13px;
+      color: var(--pink);
+    }
+    .item-text strong { color: var(--text); }
+
+    /* Pause items (skip until later) */
+    .item.pause .checkbox {
+      border-color: var(--orange);
+      border-radius: 50%;
+      cursor: not-allowed;
+    }
+    .item.pause .checkbox::after {
+      content: '';
+      width: 8px; height: 2px;
+      background: var(--orange);
+      border: none;
+      transform: none;
+    }
+    .item.pause { cursor: default; }
+    .item.pause .item-text { color: var(--text-dim); }
+    .item.pause .item-text strong { color: var(--orange); }
+
+    /* === HELP TABLE === */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface);
+      font-weight: normal;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    td code {
+      background: var(--surface-2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--pink);
+    }
+
+    /* === RESET BUTTON === */
+    .reset {
+      display: block;
+      margin: 40px auto 20px;
+      padding: 10px 18px;
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--text-faded);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .reset:hover { color: var(--pink); border-color: var(--pink); }
+
+    /* === ASK LIST INPUTS === */
+    .ask-row {
+      display: flex; flex-direction: column;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--border);
+      gap: 6px;
+    }
+    .ask-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.02em;
+    }
+    .ask-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .ask-input:focus {
+      outline: none;
+      border-color: var(--pink);
+    }
+
+    /* === FOOTER LINK === */
+    footer {
+      margin-top: 40px;
+      padding: 24px 18px;
+      text-align: center;
+      color: var(--text-faded);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--pink); }
+
+    /* === MOBILE TUNE === */
+    @media (max-width: 480px) {
+      header { padding: 12px 14px; }
+      main { padding: 0 14px 80px; }
+      .brand { font-size: 18px; }
+      .header-title { font-size: 12px; }
+      section h2 { font-size: 20px; }
+      section h3 { font-size: 14px; }
+      .item-text { font-size: 14px; }
+      table { font-size: 12px; }
+      th, td { padding: 8px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-row">
+      <div class="brand">se<span class="x-mark">x</span>í · checklist</div>
+      <div class="header-title">launch ops</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-num" id="progress-num">0 / 0</div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="before">before call <span class="tab-counter" data-counter="before"></span></button>
+    <button class="tab" data-tab="oncall">on call <span class="tab-counter" data-counter="oncall"></span></button>
+    <button class="tab" data-tab="after">after call <span class="tab-counter" data-counter="after"></span></button>
+    <button class="tab" data-tab="bogus">bogus test <span class="tab-counter" data-counter="bogus"></span></button>
+    <button class="tab" data-tab="asks">ask list <span class="tab-counter" data-counter="asks"></span></button>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================ -->
+    <!--  BEFORE THE CALL                                             -->
+    <!-- ============================================================ -->
+    <section id="before" class="active">
+      <h2>before <span class="pink">the call</span></h2>
+      <p class="subtitle">~10 min minimum, ~45 min if you do all of it. Things you can pre-stage right now without the client.</p>
+
+      <h3>must-do (~10 min)</h3>
+      <div class="item" data-id="b-pre-1"><div class="checkbox"></div><div class="item-text">Pull up the live site on your phone — <code>sexi-pr.pages.dev</code> — verify cart still works, nothing's obviously broken</div></div>
+      <div class="item" data-id="b-pre-2"><div class="checkbox"></div><div class="item-text">Open this checklist + <strong>HANDOVER-PLAYBOOK.md</strong> + <strong>CLIENT-CALL-PREP.md</strong> on your phone (3 tabs ready)</div></div>
+      <div class="item" data-id="b-pre-3"><div class="checkbox"></div><div class="item-text">Have your Cloudflare email handy (<code>xalad366@gmail.com</code> or whichever) so you can dictate when client invites you</div></div>
+      <div class="item" data-id="b-pre-4"><div class="checkbox"></div><div class="item-text">Confirm you're logged into your Squarespace (the one that has <code>sexipr.com</code>)</div></div>
+
+      <h3>nice-to-do (~30 min)</h3>
+      <p class="note">These let you walk into the call with momentum and a working preview. Do them if you have time.</p>
+      <div class="item" data-id="b-bogus"><div class="checkbox"></div><div class="item-text"><strong>Run a Bogus Gateway test purchase</strong> — see "bogus test" tab. Verifies cart → Shopify checkout → order email loop end-to-end with no real money</div></div>
+      <div class="item" data-id="b-addr"><div class="checkbox"></div><div class="item-text">Add a temp business address to Shopify (Settings → Plan → Subscription confirmation → Add business address — placeholder values OK, client overwrites later)</div></div>
+      <div class="item" data-id="b-sizes"><div class="checkbox"></div><div class="item-text">Add S/M/L/XL size variants to the 3 tee products in Shopify (Products → click tee → "Add options like size or color" → Talla → Save) — then ping me, I re-pull variant IDs</div></div>
+      <div class="item" data-id="b-photos"><div class="checkbox"></div><div class="item-text">Drag-drop product photos into Shopify products (Products → click product → Media)</div></div>
+
+      <h3>skip until after launch</h3>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text"><strong>SKIP:</strong> setting real inventory counts (need client's numbers)</div></div>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text"><strong>SKIP:</strong> final shipping rates (need client's policy decisions)</div></div>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text"><strong>SKIP:</strong> refund policy text (client decides)</div></div>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text"><strong>SKIP:</strong> real Shopify Payments KYC (client's identity, not yours)</div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!--  ON THE CALL                                                 -->
+    <!-- ============================================================ -->
+    <section id="oncall">
+      <h2>on the <span class="pink">call</span></h2>
+      <p class="subtitle">~30 min total. Tick boxes as you go.</p>
+
+      <h3>open · explain shopify switch (~3 min)</h3>
+      <div class="item" data-id="o-pitch"><div class="checkbox"></div><div class="item-text">Headline: <em>"I moved the store from Fourthwall to Shopify. Same site, much better money flow."</em> Get them aligned before any account creation.</div></div>
+
+      <h3>cloudflare account creation (~7 min, screen-share)</h3>
+      <div class="item" data-id="o-cf-1"><div class="checkbox"></div><div class="item-text">Client → <code>dash.cloudflare.com</code> → Sign Up → their email + their password (<strong>look away</strong> when they type)</div></div>
+      <div class="item" data-id="o-cf-2"><div class="checkbox"></div><div class="item-text">Client clicks the verify-email link in their inbox</div></div>
+      <div class="item" data-id="o-cf-3"><div class="checkbox"></div><div class="item-text">Client enables <strong>2FA</strong> (My Profile → Authentication → enable 2FA → scan QR)</div></div>
+      <div class="item" data-id="o-cf-4"><div class="checkbox"></div><div class="item-text">Client: Manage Account → Members → Invite member → your email → role: <strong>Super Administrator – All Privileges</strong> → Send</div></div>
+      <div class="item" data-id="o-cf-5"><div class="checkbox"></div><div class="item-text">Confirm you got the invite email (don't accept yet — do that after the call)</div></div>
+
+      <h3>shopify ownership transfer (~10 min)</h3>
+      <div class="item" data-id="o-sh-1"><div class="checkbox"></div><div class="item-text">YOU: Settings → Users → <strong>Add staff</strong> → enter client's email + name → check "Give this staff full permissions" → Save</div></div>
+      <div class="item" data-id="o-sh-2"><div class="checkbox"></div><div class="item-text">CLIENT: opens email, clicks Shopify invite, sets their own Shopify password + 2FA, lands in admin</div></div>
+      <div class="item" data-id="o-sh-3"><div class="checkbox"></div><div class="item-text">CLIENT confirms they can see the store admin dashboard</div></div>
+      <div class="item" data-id="o-sh-4"><div class="checkbox"></div><div class="item-text">YOU: Settings → Users → click client's row → <strong>Transfer ownership</strong> → confirm with your password</div></div>
+      <div class="item" data-id="o-sh-5"><div class="checkbox"></div><div class="item-text">CLIENT: Settings → Plan → Billing → <strong>Add payment method</strong> → enters their card</div></div>
+      <div class="item" data-id="o-sh-6"><div class="checkbox"></div><div class="item-text">CLIENT kicks off <strong>Shopify Payments KYC</strong> right now (Settings → Payments → Set up Shopify Payments → ID + bank + SSN/EIN). Tell them this can take hours; rest of launch isn't blocked on it.</div></div>
+
+      <h3>collect the asks (~10 min)</h3>
+      <p class="note">Switch to the "ask list" tab to fill in answers as the client says them.</p>
+      <div class="item" data-id="o-asks"><div class="checkbox"></div><div class="item-text">Walk through ask list (next tab) — note inventory, sizes, photos, refund policy, shipping rates, email forwarding, Hacienda IVU number, business registration status</div></div>
+
+      <h3>closing</h3>
+      <div class="item" data-id="o-close-1"><div class="checkbox"></div><div class="item-text">Confirm next steps: <em>"You're done. KYC runs in background. I handle Cloudflare migration, domain wiring, the rest. I'll text you when it's live."</em></div></div>
+      <div class="item" data-id="o-close-2"><div class="checkbox"></div><div class="item-text">Schedule follow-up text/call for tomorrow once KYC clears so you can do an end-to-end test purchase together</div></div>
+      <div class="item" data-id="o-close-3"><div class="checkbox"></div><div class="item-text">Get explicit <strong>"yes, ship Thursday April 30, 1 AM"</strong> sign-off</div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!--  AFTER THE CALL                                              -->
+    <!-- ============================================================ -->
+    <section id="after">
+      <h2>after <span class="pink">the call</span></h2>
+      <p class="subtitle">~1.5 hr active work + ~24h waiting on DNS / KYC.</p>
+
+      <h3>within an hour (~30 min active)</h3>
+      <div class="item" data-id="a-cf-1"><div class="checkbox"></div><div class="item-text">Accept the Cloudflare invite in your email → log in with your credentials → switch to client's account in dropdown</div></div>
+      <div class="item" data-id="a-cf-2"><div class="checkbox"></div><div class="item-text"><strong>Add <code>sexipr.com</code> zone</strong> to client's Cloudflare (Add a site → sexipr.com → Free plan)</div></div>
+      <div class="item" data-id="a-cf-3"><div class="checkbox"></div><div class="item-text">Save the 2 nameservers Cloudflare gives you</div></div>
+      <div class="item" data-id="a-cf-4"><div class="checkbox"></div><div class="item-text">Generate API token in client's account: My Profile → API Tokens → Create Token → custom: Account.Pages permission → paste to me in chat</div></div>
+      <div class="item" data-id="a-cf-5"><div class="checkbox"></div><div class="item-text">Send me the token — I deploy the migrated site to their account in 30 sec</div></div>
+      <div class="item" data-id="a-sq-1"><div class="checkbox"></div><div class="item-text">Log into your Squarespace → click <code>sexipr.com</code> → Use Custom Nameservers → paste 2 Cloudflare nameservers → Save</div></div>
+      <div class="item" data-id="a-cf-del"><div class="checkbox"></div><div class="item-text">Delete the OLD <code>sexi-pr</code> Pages project from <strong>your personal</strong> Cloudflare account (frees the <code>sexi-pr.pages.dev</code> subdomain so client's project can claim it)</div></div>
+
+      <h3>background (no action, just wait)</h3>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text">⏳ <strong>WAIT:</strong> DNS propagates Squarespace → Cloudflare. Usually 15 min, up to 24 hours worst case</div></div>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text">⏳ <strong>WAIT:</strong> Shopify Payments KYC runs at Stripe. Hours to 1-2 business days</div></div>
+
+      <h3>when DNS lands (you get a CF email, ~5 min)</h3>
+      <div class="item" data-id="a-dns-1"><div class="checkbox"></div><div class="item-text">Client's Cloudflare → Pages → sexi-pr → <strong>Custom domains</strong> → add <code>sexipr.com</code> and <code>www.sexipr.com</code> → SSL auto-provisions</div></div>
+      <div class="item" data-id="a-dns-2"><div class="checkbox"></div><div class="item-text">Test <code>https://sexipr.com</code> on phone → confirm HTTPS lock + site loads</div></div>
+      <div class="item" data-id="a-dns-3"><div class="checkbox"></div><div class="item-text">Set up Cloudflare Email Routing (client's account → Email → Routing) → forward <code>hola@sexipr.com</code> → wherever the client said</div></div>
+      <div class="item" data-id="a-dns-4"><div class="checkbox"></div><div class="item-text">Text the client: <em>"sexipr.com is live. Cart works. Shopify Payments still verifying."</em></div></div>
+
+      <h3>when KYC clears (~5 min)</h3>
+      <div class="item" data-id="a-kyc-1"><div class="checkbox"></div><div class="item-text">Disable Bogus Gateway in Shopify (Settings → Payments → deactivate "(for testing) Bogus Gateway") — Shopify Payments takes over automatically</div></div>
+      <div class="item" data-id="a-kyc-2"><div class="checkbox"></div><div class="item-text">Disable password page (Online Store → Preferences → Password protection → toggle OFF → Save)</div></div>
+      <div class="item" data-id="a-kyc-3"><div class="checkbox"></div><div class="item-text">End-to-end test purchase with REAL card for ~$1 from your phone on <code>sexipr.com</code> → confirm it lands in client's bank in a few days</div></div>
+      <div class="item" data-id="a-kyc-4"><div class="checkbox"></div><div class="item-text">Refund the test purchase to yourself from Shopify Orders dashboard</div></div>
+      <div class="item" data-id="a-kyc-5"><div class="checkbox"></div><div class="item-text">Send the client the "we're live" message</div></div>
+
+      <h3>within a week post-launch</h3>
+      <div class="item" data-id="a-post-1"><div class="checkbox"></div><div class="item-text">Move from Shopify Staff → Shopify Partners Collaborator (<code>partners.shopify.com</code> → request access → client approves)</div></div>
+      <div class="item" data-id="a-post-2"><div class="checkbox"></div><div class="item-text">Plan domain registration handover — Squarespace → Cloudflare Registrar in client's name. Schedule for ~30 days post-launch when stable.</div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!--  BOGUS TEST                                                  -->
+    <!-- ============================================================ -->
+    <section id="bogus">
+      <h2>bogus gateway · <span class="pink">safe payment test</span></h2>
+      <p class="subtitle">Test the entire checkout flow with no real money, no card, no bank info, no KYC. Shopify built this for exactly your scenario.</p>
+
+      <p class="note"><strong>What it gives you:</strong> a real order in Shopify Orders dashboard, customer confirmation email, IVU calc, shipping calc, inventory drop — every part of the chain except the actual card processor. Auto-disables when Shopify Payments goes live after KYC.</p>
+
+      <h3>step 1 · prep (~3 min)</h3>
+      <div class="item" data-id="bg-prep-1"><div class="checkbox"></div><div class="item-text">Settings → Plan → Subscription confirmation → <strong>Add business address</strong> (placeholder name + Santurce address — gets overwritten by client later)</div></div>
+      <div class="item" data-id="bg-prep-2"><div class="checkbox"></div><div class="item-text">Online Store → Preferences → <strong>Password protection</strong> → toggle OFF → Save</div></div>
+
+      <h3>step 2 · enable bogus gateway (~2 min)</h3>
+      <div class="item" data-id="bg-en-1"><div class="checkbox"></div><div class="item-text">Settings → <strong>Payments</strong></div></div>
+      <div class="item" data-id="bg-en-2"><div class="checkbox"></div><div class="item-text">Find "Supported payment methods" or "Add payment methods" or "Choose alternative provider"</div></div>
+      <div class="item" data-id="bg-en-3"><div class="checkbox"></div><div class="item-text">Search field → type <code>bogus</code></div></div>
+      <div class="item" data-id="bg-en-4"><div class="checkbox"></div><div class="item-text">Click <strong>"(for testing) Bogus Gateway"</strong> → Activate → Save</div></div>
+
+      <h3>step 3 · run test purchase (~3 min)</h3>
+      <div class="item" data-id="bg-run-1"><div class="checkbox"></div><div class="item-text">From <code>sexi-pr.pages.dev</code>, add a product to cart, click <strong>pagar</strong></div></div>
+      <div class="item" data-id="bg-run-2"><div class="checkbox"></div><div class="item-text">Shopify checkout opens → fill shipping with anything (any address)</div></div>
+      <div class="item" data-id="bg-run-3"><div class="checkbox"></div><div class="item-text">At payment section, use the magic test card numbers below</div></div>
+
+      <table>
+        <tr><th>Card number</th><th>Result</th></tr>
+        <tr><td><code>1</code></td><td>Successful payment</td></tr>
+        <tr><td><code>2</code></td><td>Declined card</td></tr>
+        <tr><td><code>3</code></td><td>Gateway error</td></tr>
+        <tr><td>anything else</td><td>Generic failure</td></tr>
+      </table>
+      <p class="note">Name on card / expiry / CVV: anything in the right format. None of it's validated.</p>
+
+      <h3>step 4 · verify the chain</h3>
+      <div class="item" data-id="bg-verify-1"><div class="checkbox"></div><div class="item-text">✅ Order shows up in Shopify admin → Orders, marked <strong>"Paid"</strong></div></div>
+      <div class="item" data-id="bg-verify-2"><div class="checkbox"></div><div class="item-text">✅ Confirmation email lands at the customer email you typed</div></div>
+      <div class="item" data-id="bg-verify-3"><div class="checkbox"></div><div class="item-text">✅ Inventory drops by the quantity ordered (if inventory is tracked)</div></div>
+      <div class="item" data-id="bg-verify-4"><div class="checkbox"></div><div class="item-text">✅ IVU 11.5% line on the receipt</div></div>
+      <div class="item" data-id="bg-verify-5"><div class="checkbox"></div><div class="item-text">✅ Shipping cost calculated (if you set up rates)</div></div>
+
+      <h3>step 5 · cleanup</h3>
+      <div class="item" data-id="bg-clean-1"><div class="checkbox"></div><div class="item-text">Refund / cancel test orders so they don't pollute order history (Orders → click test order → Refund)</div></div>
+      <div class="item" data-id="bg-clean-2"><div class="checkbox"></div><div class="item-text">Re-enable password page if you want storefront private until launch (Online Store → Preferences → Password protection → toggle ON)</div></div>
+      <div class="item pause"><div class="checkbox"></div><div class="item-text"><strong>DO NOT disable Bogus Gateway yet</strong> — auto-disables when client's Shopify Payments goes live after KYC. Leaving it on can't process real money (by definition)</div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!--  ASK LIST                                                    -->
+    <!-- ============================================================ -->
+    <section id="asks">
+      <h2>ask list · <span class="pink">fill during call</span></h2>
+      <p class="subtitle">Tap a field to write the client's answer. Saves as you type.</p>
+
+      <h3>identity / banking</h3>
+      <p class="note">This goes directly to Shopify in their KYC form — you don't see or store any of it. You just need to confirm they have these ready.</p>
+      <div class="ask-row"><label class="ask-label">Legal name (business owner)</label><input class="ask-input" data-ask="legal-name" placeholder="First Last"></div>
+      <div class="ask-row"><label class="ask-label">Has government photo ID ready?</label><input class="ask-input" data-ask="has-id" placeholder="yes / no"></div>
+      <div class="ask-row"><label class="ask-label">Has bank routing + account?</label><input class="ask-input" data-ask="has-bank" placeholder="yes / no"></div>
+      <div class="ask-row"><label class="ask-label">Tax ID type</label><input class="ask-input" data-ask="tax-type" placeholder="SSN (individual) or EIN (business)"></div>
+
+      <h3>tax (puerto rico)</h3>
+      <div class="ask-row"><label class="ask-label">Hacienda IVU merchant number</label><input class="ask-input" data-ask="ivu" placeholder="number, or 'needs to register'"></div>
+      <div class="ask-row"><label class="ask-label">Business type</label><input class="ask-input" data-ask="biz-type" placeholder="LLC / Inc / sole proprietor / individual"></div>
+
+      <h3>inventory</h3>
+      <div class="ask-row"><label class="ask-label">sexí hat (única)</label><input class="ask-input" data-ask="inv-hat" placeholder="quantity"></div>
+      <div class="ask-row"><label class="ask-label">sexí tee · S / M / L / XL</label><input class="ask-input" data-ask="inv-sexi" placeholder="e.g. 10 / 15 / 15 / 8"></div>
+      <div class="ask-row"><label class="ask-label">puñeta tee · S / M / L / XL</label><input class="ask-input" data-ask="inv-puneta" placeholder="e.g. 10 / 15 / 15 / 8"></div>
+      <div class="ask-row"><label class="ask-label">yo ❤ taínas tee · S / M / L / XL</label><input class="ask-input" data-ask="inv-tainas" placeholder="e.g. 10 / 15 / 15 / 8"></div>
+      <div class="ask-row"><label class="ask-label">Photos available?</label><input class="ask-input" data-ask="photos" placeholder="yes — drive folder link / no / use existing"></div>
+
+      <h3>policies</h3>
+      <div class="ask-row"><label class="ask-label">Refund / return policy</label><input class="ask-input" data-ask="refund" placeholder="e.g. all sales final / exchange-only 7d / full refund 14d"></div>
+      <div class="ask-row"><label class="ask-label">Shipping to PR</label><input class="ask-input" data-ask="ship-pr" placeholder="e.g. flat $5 / free over $50"></div>
+      <div class="ask-row"><label class="ask-label">Shipping to USA mainland</label><input class="ask-input" data-ask="ship-us" placeholder="e.g. flat $12 / not shipping to US"></div>
+      <div class="ask-row"><label class="ask-label">Shipping international</label><input class="ask-input" data-ask="ship-intl" placeholder="yes / no"></div>
+
+      <h3>email forwarding</h3>
+      <div class="ask-row"><label class="ask-label"><code>hola@sexipr.com</code> forwards to:</label><input class="ask-input" data-ask="hola-fwd" placeholder="email address"></div>
+      <div class="ask-row"><label class="ask-label">Order notifications email</label><input class="ask-input" data-ask="order-email" placeholder="email address (can be same as above)"></div>
+
+      <h3>final approval</h3>
+      <div class="ask-row"><label class="ask-label">Sign-off on April 30, 1 AM launch?</label><input class="ask-input" data-ask="signoff" placeholder="yes / different date"></div>
+      <div class="ask-row"><label class="ask-label">Other notes from call</label><input class="ask-input" data-ask="notes" placeholder="anything else worth capturing"></div>
+    </section>
+
+    <button class="reset" id="reset">↺ reset checklist</button>
+
+  </main>
+
+  <footer>
+    se<span class="x-mark" style="color:var(--pink)">x</span>í · launch checklist · <a href="/">home</a> · <a href="/tienda">tienda</a>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'sexi_launch_checklist_v1';
+
+      // === STATE ===
+      function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+        catch (_) { return {}; }
+      }
+      function saveState(s) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (_) {}
+      }
+      let state = loadState();
+      if (!state.checks) state.checks = {};
+      if (!state.asks) state.asks = {};
+
+      // === CHECKBOX ITEMS ===
+      const items = document.querySelectorAll('.item:not(.pause)');
+      items.forEach(it => {
+        const id = it.dataset.id;
+        if (!id) return;
+        if (state.checks[id]) it.classList.add('checked');
+        it.addEventListener('click', () => {
+          it.classList.toggle('checked');
+          state.checks[id] = it.classList.contains('checked');
+          saveState(state);
+          updateProgress();
+        });
+      });
+
+      // === ASK INPUTS ===
+      document.querySelectorAll('.ask-input').forEach(inp => {
+        const key = inp.dataset.ask;
+        if (state.asks[key]) inp.value = state.asks[key];
+        inp.addEventListener('input', () => {
+          state.asks[key] = inp.value;
+          saveState(state);
+        });
+      });
+
+      // === TABS ===
+      const sections = document.querySelectorAll('section');
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          const target = t.dataset.tab;
+          tabs.forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          sections.forEach(s => {
+            s.classList.toggle('active', s.id === target);
+          });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      // === PROGRESS ===
+      function updateProgress() {
+        // Per-tab counters
+        const tabIds = ['before', 'oncall', 'after', 'bogus'];
+        let totalDone = 0, totalAll = 0;
+        tabIds.forEach(tid => {
+          const sec = document.getElementById(tid);
+          const its = sec.querySelectorAll('.item:not(.pause)');
+          const done = sec.querySelectorAll('.item.checked').length;
+          totalDone += done;
+          totalAll += its.length;
+          const counter = document.querySelector(`[data-counter="${tid}"]`);
+          if (counter) counter.textContent = `${done}/${its.length}`;
+        });
+        // Asks counter — count filled inputs
+        const asks = document.querySelectorAll('.ask-input');
+        const filledAsks = Array.from(asks).filter(a => a.value.trim().length > 0).length;
+        const askCounter = document.querySelector('[data-counter="asks"]');
+        if (askCounter) askCounter.textContent = `${filledAsks}/${asks.length}`;
+        // Overall progress bar
+        const pct = totalAll === 0 ? 0 : Math.round((totalDone / totalAll) * 100);
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('progress-num').textContent = `${totalDone} / ${totalAll}`;
+      }
+      // Update ask counter on input change too
+      document.querySelectorAll('.ask-input').forEach(inp => {
+        inp.addEventListener('input', updateProgress);
+      });
+      updateProgress();
+
+      // === RESET ===
+      document.getElementById('reset').addEventListener('click', () => {
+        if (!confirm('Reset all checks and ask list answers?')) return;
+        state = { checks: {}, asks: {} };
+        saveState(state);
+        document.querySelectorAll('.item.checked').forEach(it => it.classList.remove('checked'));
+        document.querySelectorAll('.ask-input').forEach(i => i.value = '');
+        updateProgress();
+      });
+    })();
+  </script>
+</body>
+</html>

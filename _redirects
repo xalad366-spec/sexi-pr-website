@@ -1,0 +1,5 @@
+# Cloudflare Pages auto-strips .html — visiting /tienda serves /tienda.html.
+
+# /admin is dead — Shopify is sole source of truth. Bounce any /admin hit to home.
+/admin/* / 302
+/admin / 302

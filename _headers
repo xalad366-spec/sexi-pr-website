@@ -1,0 +1,31 @@
+# Security headers — sexí preview demo
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Long cache for fingerprintable static assets
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Short cache for HTML so copy updates go live quickly
+/*.html
+  Cache-Control: public, max-age=60, must-revalidate
+
+# Medium cache for CSS/JS — they're cache-busted via ?v= query
+/*.css
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Font files — long cache, immutable
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.otf
+  Cache-Control: public, max-age=31536000, immutable
