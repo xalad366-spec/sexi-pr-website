@@ -3076,10 +3076,11 @@ body.modal-open { overflow: hidden; }
 /* Description — no drop cap */
 .article-modal.is-product .article-modal__body {
   padding-top: 20px;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 20px;        /* Frank example — bigger, more readable */
+  line-height: 1.25;      /* tighter so the two-line wrap matches the design */
   color: var(--text-body);
   max-width: none;
+  font-weight: 700;
 }
 .article-modal.is-product .article-modal__body p { margin: 0 0 12px 0; }
 .article-modal.is-product .article-modal__body p:last-child { margin: 0; }
