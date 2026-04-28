@@ -4563,3 +4563,62 @@ body.theme-light .cart-drawer__remove { color: #555555 !important; }
 
 /* "AL PAGAR ABRIMOS CHECKOUT SEGURO · ENVÍOS A PR & USA" footer note */
 body.theme-light .cart-drawer__note { color: #555555 !important; }
+
+/* ============================================================
+   Drive change list — fixup C (light-mode cart contrast — finalize)
+   The rules added in commit B used the same specificity as existing
+   light-theme rules at line 4126+; tied !important meant CSS picked
+   one based on declaration order but some live-DOM combinations still
+   resolved to invisible (white-on-white). Use parent-chain selectors
+   so these rules unambiguously win.
+   ============================================================ */
+
+/* Cart count badge "2" — solid pink fill, white text */
+body.theme-light .cart-drawer .cart-drawer__title .cart-drawer__count {
+  background: #FF1A8C !important;
+  color: #FFFFFF !important;
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 22px !important;
+}
+
+/* Cart line item: name (the " hat" / " tee" text after pink wordmark) */
+body.theme-light .cart-drawer .cart-item .cart-item__name {
+  color: #000000 !important;
+}
+
+/* Cart line item: meta line (e.g., "talla · única") */
+body.theme-light .cart-drawer .cart-item .cart-item__meta {
+  color: #555555 !important;
+}
+
+/* Cart line item: qty stepper - 1 + */
+body.theme-light .cart-drawer .cart-item__qty,
+body.theme-light .cart-drawer .cart-item__qty button,
+body.theme-light .cart-drawer .cart-item__qty span {
+  color: #000000 !important;
+}
+
+/* QUITAR remove button on each cart line */
+body.theme-light .cart-drawer .cart-item__remove,
+body.theme-light .cart-drawer .cart-item button[data-remove] {
+  color: #555555 !important;
+}
+
+/* Subtotal $XX.XX (the .amt strong tag) */
+body.theme-light .cart-drawer .cart-drawer__summary .cart-drawer__line .amt,
+body.theme-light .cart-drawer .cart-drawer__line strong.amt {
+  color: #000000 !important;
+}
+
+/* Subtotal label "subtotal" + envío row (.lab / .val) */
+body.theme-light .cart-drawer .cart-drawer__summary .cart-drawer__line .lab,
+body.theme-light .cart-drawer .cart-drawer__line .lab,
+body.theme-light .cart-drawer .cart-drawer__line .val {
+  color: #444444 !important;
+}
