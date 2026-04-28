@@ -201,7 +201,11 @@
     });
   }
 
-  /* ===== TIENDA: RENDER PRODUCTS FROM products.json ===== */
+  /* ===== TIENDA: RENDER PRODUCTS FROM SHOPIFY STOREFRONT API =====
+     Shopify is the single source of truth for products. Photos uploaded
+     in Shopify, prices, sizes, inventory all flow through automatically.
+     No more products.json, no more committing image files for each
+     product update. */
   function escapeAttr(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;')
@@ -209,6 +213,114 @@
       .replace(/'/g, '&#39;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
+  }
+  // Wrap "sexí" in pink + x-mark accent and wrap heart emoji in pink so the
+  // brand styling carries through regardless of what's typed in Shopify.
+  function brandNameHtml(title) {
+    if (!title) return '';
+    var s = escapeAttr(title);
+    s = s.replace(/sex[íÍi]/gi, '<span class="pink">se<span class="x-mark">x</span>í</span>');
+    s = s.replace(/❤/g, '<span class="pink">❤</span>');
+    return s;
+  }
+  // Convert Shopify Storefront API product node to the legacy product shape
+  // that renderShopCard + the modal already understand.
+  function shopifyNodeToProduct(node) {
+    var handle = node.handle || '';
+    var title = node.title || '';
+    var variantEdges = (node.variants && node.variants.edges) || [];
+    var variants = variantEdges.map(function (e) { return e.node; });
+    function numericVariantId(gid) {
+      return String(gid || '').split('/').pop();
+    }
+    // Build size -> variantId map
+    var variantMap = {};
+    var sizes = [];
+    variants.forEach(function (v) {
+      var opts = v.selectedOptions || [];
+      var sizeOpt = opts.find(function (o) { return /talla|size/i.test(o.name); });
+      var sizeName = sizeOpt ? sizeOpt.value : 'única';
+      if (sizeName === 'Default Title') {
+        variantMap['única'] = numericVariantId(v.id);
+        if (sizes.indexOf('única') === -1) sizes.push('única');
+      } else {
+        variantMap[sizeName] = numericVariantId(v.id);
+        sizes.push(sizeName);
+      }
+    });
+    var sortOrder = { XS: 0, S: 1, M: 2, L: 3, XL: 4, XXL: 5, 'única': 99 };
+    sizes.sort(function (a, b) {
+      var oa = sortOrder[a] != null ? sortOrder[a] : 50;
+      var ob = sortOrder[b] != null ? sortOrder[b] : 50;
+      return oa - ob;
+    });
+    // Images
+    var imageEdges = (node.images && node.images.edges) || [];
+    var images = imageEdges.map(function (e) { return e.node.url; }).filter(Boolean);
+    var featured = (node.featuredImage && node.featuredImage.url) || images[0] || 'assets/01-brand/logo-01.png';
+    // Tags-derived flags
+    var tags = node.tags || [];
+    var headliner = tags.indexOf('headliner') !== -1 || tags.indexOf('featured') !== -1;
+    var soldOut = node.availableForSale === false;
+    // Category from Shopify product type
+    var pt = (node.productType || '').toLowerCase();
+    var category = (pt.indexOf('hat') !== -1 || pt.indexOf('cap') !== -1 || pt.indexOf('gorra') !== -1) ? 'gorra'
+      : (pt.indexOf('shirt') !== -1 || pt.indexOf('tee') !== -1 || pt.indexOf('camis') !== -1) ? 'tee'
+      : 'item';
+    // Price (min variant price)
+    var price = parseFloat(
+      (node.priceRange && node.priceRange.minVariantPrice && node.priceRange.minVariantPrice.amount)
+      || (variants[0] && variants[0].price && variants[0].price.amount)
+      || 0
+    );
+    // Description: Shopify gives HTML. Strip tags for safe display in cards;
+    // pass full HTML to the modal via descriptionHtml. Keep both flavors.
+    var descHtml = node.descriptionHtml || '';
+    var descText = descHtml.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    return {
+      id: handle,
+      name: title,
+      name_html: brandNameHtml(title),
+      price: price,
+      thumbnail: featured,
+      gallery: images.length ? images : [featured],
+      sizes: sizes.length ? sizes : ['única'],
+      category: category,
+      headliner: headliner,
+      sold_out: soldOut,
+      visible: true,
+      description: descText,
+      shopify_handle: handle,
+      shopify_variants: variantMap
+    };
+  }
+  function fetchShopifyProducts() {
+    var cfg = window.__sexiShopConfig || {};
+    var shop = cfg.shopify_shop || 'sexipr.myshopify.com';
+    var token = cfg.shopify_storefront_token;
+    var apiVersion = cfg.shopify_api_version || '2024-10';
+    if (!token) {
+      console.error('[sexi] Storefront token missing — set window.__sexiShopConfig in the page <head>');
+      return Promise.resolve([]);
+    }
+    var query = '{ products(first: 50) { edges { node { id handle title descriptionHtml availableForSale productType tags priceRange { minVariantPrice { amount currencyCode } } featuredImage { url altText } images(first: 8) { edges { node { url altText } } } variants(first: 20) { edges { node { id title availableForSale selectedOptions { name value } price { amount } } } } } } } }';
+    return fetch('https://' + shop + '/api/' + apiVersion + '/graphql.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': token
+      },
+      body: JSON.stringify({ query: query })
+    })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function (data) {
+        if (data.errors) {
+          console.error('[sexi] Shopify Storefront API errors:', data.errors);
+          return [];
+        }
+        var edges = (data.data && data.data.products && data.data.products.edges) || [];
+        return edges.map(function (e) { return shopifyNodeToProduct(e.node); });
+      });
   }
   function renderShopCard(p) {
     var wide = p.headliner ? ' shop-card--wide' : '';
@@ -221,7 +333,8 @@
     var gallery = galleryArr.join(',');
     var titleHtml = p.name_html || escapeAttr(p.name);
     var priceStr = (Number(p.price) || 0).toFixed(2);
-    return '<a href="#" class="shop-card' + wide + '" data-shop-type="' + escapeAttr(p.category || 'tee') + '"'
+    var bodyAttr = p.description ? ' data-article-body="' + escapeAttr(p.description) + '"' : '';
+    return '<a href="#" class="shop-card' + wide + soldOutCls + '" data-shop-type="' + escapeAttr(p.category || 'tee') + '"'
       + ' data-product-id="' + escapeAttr(p.id) + '"'
       + ' data-product-name="' + escapeAttr(p.name) + '"'
       + ' data-product-price="' + priceStr + '"'
@@ -229,9 +342,10 @@
       + ' data-product-sizes="' + escapeAttr(sizes) + '"'
       + ' data-article-title="' + escapeAttr(titleHtml) + '"'
       + ' data-article-thumb="' + escapeAttr(p.thumbnail || '') + '"'
-      + ' data-article-gallery="' + escapeAttr(gallery) + '">'
+      + ' data-article-gallery="' + escapeAttr(gallery) + '"'
+      + bodyAttr + soldOutAttr + '>'
       + '<div class="shop-card__thumb' + thumbModifier + '">'
-      + '<img src="' + escapeAttr(p.thumbnail || '') + '" alt="' + escapeAttr(p.name) + '">'
+      + '<img src="' + escapeAttr(p.thumbnail || '') + '" alt="' + escapeAttr(p.name) + '" loading="lazy">'
       + '</div>'
       + '<div class="shop-card__body">'
       + (p.sold_out ? '<span class="shop-card__sold-badge">agotado</span>' : '')
@@ -242,44 +356,33 @@
   }
   window.__sexiProductSlugs = window.__sexiProductSlugs || {};
   function loadAndRenderProducts() {
-    // Fetch products.json on EVERY page so the cart "pagar" button has access
-    // to variant IDs even when the page doesn't render a product grid (home, etc.)
-    var grid = document.querySelector('[data-shop-grid][data-products-source]');
-    var src = (grid && grid.getAttribute('data-products-source')) || 'products.json';
-    fetch(src + '?_=' + Date.now())
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
-      .then(function (data) {
-        var list = (data && data.products) || (Array.isArray(data) ? data : []);
-        var products = list
-          .filter(function (p) { return p && p.id && p.visible !== false; })
-          .sort(function (a, b) {
-            var ha = a.headliner ? 1 : 0, hb = b.headliner ? 1 : 0;
-            if (hb - ha) return hb - ha;
-            return (a.order || 999) - (b.order || 999);
-          });
-        // Top-level config (shop URL etc.) — always populate
-        if (data && data.config) window.__sexiShopConfig = data.config;
-        // Per-product Shopify metadata (handle + per-size variant IDs) — always populate
-        products.forEach(function (p) {
-          if (p.shopify_variants) {
-            window.__sexiProductSlugs[p.id] = {
-              handle: p.shopify_handle || p.id,
-              variants: p.shopify_variants
-            };
-          } else if (p.shopify_handle) {
-            window.__sexiProductSlugs[p.id] = { handle: p.shopify_handle, variants: null };
-          } else if (p.fourthwall_slug) {
-            // Legacy fallback during migration
-            window.__sexiProductSlugs[p.id] = p.fourthwall_slug;
-          }
+    var grid = document.querySelector('[data-shop-grid]');
+    fetchShopifyProducts()
+      .then(function (products) {
+        // Filter visible + sort: headliners first, then API order
+        products = products.filter(function (p) { return p && p.id && p.visible !== false; });
+        products.sort(function (a, b) {
+          var ha = a.headliner ? 1 : 0, hb = b.headliner ? 1 : 0;
+          return hb - ha;
         });
-        // Only render the grid if we're on a page that has one
+        // Cache for cart drawer / variant resolution (works on any page)
+        products.forEach(function (p) {
+          window.__sexiProductSlugs[p.id] = {
+            handle: p.shopify_handle,
+            variants: p.shopify_variants
+          };
+        });
+        // Render the grid only if this page has one (tienda)
         if (grid) {
-          grid.innerHTML = products.map(renderShopCard).join('');
+          if (products.length) {
+            grid.innerHTML = products.map(renderShopCard).join('');
+          } else {
+            grid.innerHTML = '<p class="shop-empty-msg">No hay productos disponibles ahora mismo. Vuelve pronto.</p>';
+          }
         }
       })
       .catch(function (err) {
-        console.error('[sexi] could not load products.json:', err);
+        console.error('[sexi] could not load products from Shopify:', err);
         var empty = document.querySelector('[data-shop-empty]');
         if (empty) {
           empty.hidden = false;
