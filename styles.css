@@ -4959,7 +4959,7 @@ body.theme-light .manifesto--preview .manifesto__sub {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 30%;            /* narrower so the center 40% of the photo is click-through */
+  width: 20%;            /* center 60 % of the photo is click-through (lightbox zone) */
   background: transparent;
   border: 0;
   padding: 0;
@@ -4976,4 +4976,59 @@ body.theme-light .manifesto--preview .manifesto__sub {
 @media (hover: none), (max-width: 640px) {
   /* Touch devices / phones: rely on swipe gesture, not click zones */
   .product-nav { display: none; }
+}
+
+
+/* === Product photo lightbox — opens when user clicks the center 60% of a slide === */
+.article-modal.is-product .product-slide img {
+  cursor: zoom-in;
+}
+.product-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;          /* above the modal */
+  padding: 32px;
+  cursor: zoom-out;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.product-lightbox.is-open { display: flex; }
+.product-lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.product-lightbox__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+.product-lightbox__close:hover {
+  background: var(--pink);
+  color: var(--white);
+}
+@media (max-width: 640px) {
+  /* Lightbox not needed on phones — pinch-to-zoom is native */
+  .product-lightbox { display: none !important; }
+  .article-modal.is-product .product-slide img { cursor: default; }
 }

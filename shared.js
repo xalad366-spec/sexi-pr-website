@@ -484,6 +484,35 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
 
+  /* ===== PRODUCT LIGHTBOX — bigger version of a photo on click ===== */
+  function ensureProductLightbox() {
+    var lb = document.querySelector('.product-lightbox');
+    if (lb) return lb;
+    lb = document.createElement('div');
+    lb.className = 'product-lightbox';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.innerHTML = '<img alt=""><button class="product-lightbox__close" type="button" aria-label="Cerrar">×</button>';
+    document.body.appendChild(lb);
+    lb.addEventListener('click', function (e) {
+      if (e.target === lb || e.target.classList.contains('product-lightbox__close')) {
+        lb.classList.remove('is-open');
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('is-open')) {
+        lb.classList.remove('is-open');
+      }
+    });
+    return lb;
+  }
+  function openProductLightbox(src) {
+    if (!src) return;
+    var lb = ensureProductLightbox();
+    lb.querySelector('img').src = src;
+    lb.classList.add('is-open');
+  }
+
   /* ===== ARTICLE MODAL ===== */
   function ensureModal() {
     let modal = document.querySelector('.article-modal');
@@ -586,6 +615,12 @@
         });
         if (strip && nextBtn) nextBtn.addEventListener('click', function () {
           strip.scrollBy({ left: strip.clientWidth, behavior: 'smooth' });
+        });
+        // Wire up center-click on each slide img → open lightbox with larger version
+        thumbEl.querySelectorAll('.product-slide img').forEach(function (slideImg) {
+          slideImg.addEventListener('click', function () {
+            openProductLightbox(slideImg.src);
+          });
         });
       } else {
         thumbEl.style.display = 'none';
