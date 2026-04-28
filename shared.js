@@ -560,6 +560,9 @@
           allImgs.map(src => '<div class="product-slide"><img src="' + src + '" alt="" loading="lazy"></div>').join(''),
           '</div>',
           allImgs.length > 1 ? [
+            // Invisible click zones for desktop carousel navigation — left half = prev, right half = next.
+            '<button type="button" class="product-nav product-nav--prev" aria-label="Foto anterior"></button>',
+            '<button type="button" class="product-nav product-nav--next" aria-label="Siguiente foto"></button>',
             '<div class="product-dots">',
             allImgs.map((_, i) => '<span class="product-dot' + (i === 0 ? ' is-active' : '') + '"></span>').join(''),
             '</div>'
@@ -575,6 +578,15 @@
             dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
           });
         }
+        // Wire up invisible left/right click zones
+        const prevBtn = thumbEl.querySelector('.product-nav--prev');
+        const nextBtn = thumbEl.querySelector('.product-nav--next');
+        if (strip && prevBtn) prevBtn.addEventListener('click', function () {
+          strip.scrollBy({ left: -strip.clientWidth, behavior: 'smooth' });
+        });
+        if (strip && nextBtn) nextBtn.addEventListener('click', function () {
+          strip.scrollBy({ left: strip.clientWidth, behavior: 'smooth' });
+        });
       } else {
         thumbEl.style.display = 'none';
       }
