@@ -3138,18 +3138,105 @@ body.modal-open { overflow: hidden; }
 /* Hide the legacy bottom gallery thumbnail row — photos live in the top carousel now */
 .article-modal.is-product .article-modal__gallery { display: none !important; }
 
-/* Mobile tweaks */
+/* === Phone layout — locked from playground 2026-04-28 ===
+   Translates Frank's editable phone playground (canvas 380×689) into
+   responsive CSS. Each block keeps its exact pixel offset from the modal
+   inner left edge, so the layout matches the playground 1:1 on iPhone-13
+   width and gracefully degrades on wider/narrower phones. */
 @media (max-width: 640px) {
-  .article-modal.is-product .article-modal__inner {
-    padding: 0 20px 32px 20px;
-    margin: 12px 0 40px;
+  /* Full-bleed on phones: kill the outer page gutter and side borders so
+     the modal inner === full viewport width, matching the playground canvas. */
+  .article-modal {
+    padding: 0;
   }
+  .article-modal.is-product .article-modal__inner {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 24px 0;
+    border-left: 0;
+    border-right: 0;
+    border-top-width: 2px;
+    border-bottom: 0;
+  }
+
+  /* Close button (top-right) */
+  .article-modal.is-product .article-modal__close {
+    top: 20px;
+    right: 13px;
+    width: 26px;
+    height: 26px;
+    font-size: 16px;
+  }
+
+  /* Title — 38px, fills width with breathing room */
   .article-modal.is-product .article-modal__title {
-    font-size: clamp(32px, 11vw, 56px);
-    padding: 24px 0 24px 0;
+    font-size: 38px;
+    line-height: 1.0;
+    padding: 24px 47px 18px 33px;
+    margin: 0;
+  }
+
+  /* Photo carousel — aspect 325/348 (~ Frank's locked size) */
+  .article-modal.is-product .article-modal__thumb {
+    margin: 0 26px 0 29px;
+    aspect-ratio: 325 / 348;
+  }
+  .article-modal.is-product .article-modal__thumb .product-dots {
+    bottom: 10px;
+  }
+
+  /* Description — small block, intentionally 9px per Frank's design */
+  .article-modal.is-product .article-modal__body {
+    margin: 12px 32px 0 35px;
+    padding: 0;
+    font-size: 9px;
+    line-height: 1.45;
+    max-width: none;
+  }
+  .article-modal.is-product .article-modal__body p { margin: 0 0 6px 0; }
+  .article-modal.is-product .article-modal__body p:last-child { margin: 0; }
+
+  /* Buy block — flat, per-child margins control x positions */
+  .article-modal.is-product .article-modal__buy {
+    margin: 12px 0 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    gap: 0;
+    display: block;
+  }
+  .article-modal.is-product .article-modal__price {
+    font-size: 22px;
+    margin: 0 0 14px 31px;
   }
   .article-modal.is-product .article-modal__sizes {
-    margin-bottom: 24px;
+    margin: 0 0 12px 33px;
+    flex-wrap: wrap;
+  }
+  .article-modal.is-product .article-modal__sizes legend {
+    font-size: 11px;
+    flex-basis: auto;
+    margin: 0 12px 0 0;
+    float: none;
+  }
+  .article-modal.is-product .article-modal__sizes label {
+    flex: 0 0 auto;
+  }
+  .article-modal.is-product .article-modal__sizes span {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+  .article-modal.is-product .article-modal__buy-btn {
+    display: block;
+    width: calc(100% - 52px);
+    margin: 0 24px 0 28px;
+    padding: 18px 0;
+    font-size: 14px;
+    letter-spacing: 4px;
+    box-sizing: border-box;
   }
 }
 
