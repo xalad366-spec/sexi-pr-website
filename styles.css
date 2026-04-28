@@ -4959,7 +4959,7 @@ body.theme-light .manifesto--preview .manifesto__sub {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 50%;
+  width: 30%;            /* narrower so the center 40% of the photo is click-through */
   background: transparent;
   border: 0;
   padding: 0;
