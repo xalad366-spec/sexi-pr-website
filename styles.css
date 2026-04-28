@@ -3076,7 +3076,7 @@ body.modal-open { overflow: hidden; }
 /* Description — no drop cap */
 .article-modal.is-product .article-modal__body {
   padding-top: 20px;
-  font-size: 24px;        /* Frank example — bigger so it wraps after "para ti!" */
+  font-size: 26px;        /* Frank example — wrap after "para ti!" */
   line-height: 1.25;      /* tighter so the two-line wrap matches the design */
   color: var(--text-body);
   max-width: none;
