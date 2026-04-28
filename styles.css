@@ -3193,12 +3193,14 @@ body.modal-open { overflow: hidden; }
     bottom: 10px;
   }
 
-  /* Description — small block, intentionally 9px per Frank's design */
+  /* Description — same treatment as desktop (bumped 2026-04-28):
+     bigger, bolder, tighter so it reads cleanly on phone too. */
   .article-modal.is-product .article-modal__body {
     margin: 12px 32px 0 35px;
     padding: 0;
-    font-size: 9px;
-    line-height: 1.45;
+    font-size: 14px;
+    line-height: 1.25;
+    font-weight: 700;
     max-width: none;
   }
   .article-modal.is-product .article-modal__body p { margin: 0 0 6px 0; }
