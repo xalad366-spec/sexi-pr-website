@@ -5050,6 +5050,6 @@ body.theme-light .manifesto--preview .manifesto__sub {
 
 /* === Phone hero corners — bump top labels up so they hug the nav (Drive change #12) === */
 @media (max-width: 640px) {
-  .hero__corner--tl { top: 56px; }
-  .hero__corner--tr { top: 56px; }
+  .hero__corner--tl { top: 28px; }
+  .hero__corner--tr { top: 28px; }
 }
