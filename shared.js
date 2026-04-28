@@ -219,7 +219,7 @@
   function brandNameHtml(title) {
     if (!title) return '';
     var s = escapeAttr(title);
-    s = s.replace(/sex[íÍi]/gi, '<span class="pink">se<span class="x-mark">x</span>í</span>');
+    s = s.replace(/sex[íÍi]/gi, '<span class="pink">se<span class="x-mark">x</span>i</span>');
     s = s.replace(/❤/g, '<span class="pink">❤</span>');
     return s;
   }
