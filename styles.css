@@ -4759,8 +4759,8 @@ body.theme-light .manifesto--preview .manifesto__sub {
 }
 
 
-/* Empty-cart "sexí" wordmark: nudge the brand accent up so it doesn't crash
-   into the X cap (font-weight 900 + letter-spacing -0.045 makes it tighter). */
+/* Empty-cart "sexí" wordmark — accent uses the same standard rule as every
+   other brand wordmark on the site (top: -0.02em, the global default). */
 .cart-drawer__empty-mark .x-mark::after {
-  top: -0.18em;
+  top: -0.02em;
 }
