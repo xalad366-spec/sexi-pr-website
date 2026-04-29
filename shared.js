@@ -934,6 +934,11 @@
     if (!toast) {
       toast = document.createElement('div');
       toast.className = 'cart-toast';
+      // Click → open cart drawer (toast stays visible the same duration)
+      toast.addEventListener('click', () => {
+        toast.classList.remove('is-show');
+        openCart();
+      });
       document.body.appendChild(toast);
     }
     toast.textContent = msg;

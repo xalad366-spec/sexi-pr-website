@@ -2488,17 +2488,10 @@ body.modal-open { overflow: hidden; }
   background: var(--white);
   color: var(--pink);
 }
+/* Hide the cart count badge entirely when the cart is empty (count=0). */
 .nav__cart[data-count="0"] .count,
 .nav__cart[data-count="0"] .nav__cart-count {
-  background: transparent;
-  color: var(--text-dim);
-  border: 1px solid var(--line);
-}
-.nav__cart:hover[data-count="0"] .count,
-.nav__cart:hover[data-count="0"] .nav__cart-count {
-  color: var(--white);
-  border-color: var(--white);
-  background: transparent;
+  display: none;
 }
 
 /* === CART DRAWER === */
@@ -2954,7 +2947,9 @@ body.modal-open { overflow: hidden; }
   transition: transform .25s cubic-bezier(.2,.8,.2,1);
   pointer-events: none;
   border: 1px solid var(--pink-hot);
+  cursor: pointer;
 }
+.cart-toast:hover { background: var(--pink-hot, #ff3da3); }
 .cart-toast.is-visible,
 .cart-toast.is-show { transform: translateX(0); pointer-events: auto; }
 @media (max-width: 640px) {
