@@ -4764,3 +4764,13 @@ body.theme-light .manifesto--preview .manifesto__sub {
 .cart-drawer__empty-mark .x-mark::after {
   top: -0.02em;
 }
+
+
+/* Cart drawer "SEXI SHOP" eyebrow at 10 px text — same fix as footer copyright:
+   bump accent up + center horizontally so it's visible above the uppercase X. */
+.cart-drawer__kicker .x-mark { line-height: 1; }
+.cart-drawer__kicker .x-mark::after {
+  top: -0.25em;
+  left: 58%;
+  font-size: 0.95em;
+}
