@@ -2973,8 +2973,6 @@ body.modal-open { overflow: hidden; }
   .cart-toast.is-show { transform: translate(-50%, 0); }
 }
 
-
-
 /* ==========================================================================
    PRODUCT MODAL — v3 layout (locked 2026-04-28)
    Scoped to .article-modal.is-product so article modals keep the old style.
@@ -3955,193 +3953,6 @@ body.modal-open { overflow: hidden; }
   .rs-pullquote::before { top: -16px; font-size: 100px; }
 }
 
-/* ========================================================================
-   PREVIEW MODE — blur invented/draft copy for client demo
-   Enable by adding ?preview=1 to the URL (handled in shared.js)
-   ======================================================================== */
-
-/* The .draft class is a manual marker; .no-draft is an escape hatch. */
-.draft {
-  transition: filter 0.25s ease, opacity 0.25s ease;
-}
-
-/* Blur pass DISABLED 2026-04-23 — Frank removed all content blur after
-   the client review. Selectors are kept as documentation; the rule body
-   is a no-op so the `.draft` class and `body.preview-mode` stay harmless.
-   To restore: put `filter: blur(5px); user-select: none; cursor: default;`
-   back into the first rule and `filter: blur(9px);` into the second. */
-body.preview-mode .draft,
-
-/* Card/lead/event bodies — all content */
-body.preview-mode .rs-card__title:not(.no-draft),
-body.preview-mode .rs-card__deck:not(.no-draft),
-body.preview-mode .rs-card__date:not(.no-draft),
-body.preview-mode .rs-card__meta:not(.no-draft),
-body.preview-mode .rs-card__eyebrow:not(.no-draft),
-body.preview-mode .rs-card__tag:not(.no-draft),
-body.preview-mode .rs-lead__title:not(.no-draft),
-body.preview-mode .rs-lead__deck:not(.no-draft),
-body.preview-mode .rs-lead__meta:not(.no-draft),
-body.preview-mode .rs-lead__eyebrow:not(.no-draft),
-body.preview-mode .rs-lead__tag:not(.no-draft),
-body.preview-mode .rs-event__title:not(.no-draft),
-body.preview-mode .rs-event__deck:not(.no-draft),
-body.preview-mode .rs-event__date:not(.no-draft),
-body.preview-mode .rs-event__meta:not(.no-draft),
-body.preview-mode .rs-event__eyebrow:not(.no-draft),
-
-/* Section issue labels (invented dates / volumes / cover captions) */
-body.preview-mode .rs-section__label:not(.no-draft),
-body.preview-mode .rs-section__link:not(.no-draft),
-body.preview-mode .rs-aside__eyebrow:not(.no-draft),
-body.preview-mode .rs-aside__body:not(.no-draft),
-body.preview-mode .rs-pullquote__body:not(.no-draft),
-body.preview-mode .rs-pullquote__attrib:not(.no-draft),
-
-/* Shop — everything except structural toolbar title + filter buttons */
-body.preview-mode .shop-card__title:not(.no-draft),
-body.preview-mode .shop-card__deck:not(.no-draft),
-body.preview-mode .shop-card__desc:not(.no-draft),
-body.preview-mode .shop-card__price:not(.no-draft),
-body.preview-mode .shop-card__edition:not(.no-draft),
-body.preview-mode .shop-card__meta:not(.no-draft),
-body.preview-mode .shop-card__eyebrow:not(.no-draft),
-body.preview-mode .shop-card__tag:not(.no-draft),
-body.preview-mode .shop-hero__label:not(.no-draft),
-body.preview-mode .shop-hero__lede:not(.no-draft),
-body.preview-mode .shop-hero__meta:not(.no-draft),
-body.preview-mode .shop-toolbar__eyebrow:not(.no-draft),
-body.preview-mode .shop-toolbar__count:not(.no-draft),
-body.preview-mode .shop-preview__name:not(.no-draft),
-body.preview-mode .shop-preview__price:not(.no-draft),
-body.preview-mode .shop-preview__deck:not(.no-draft),
-body.preview-mode .shop-preview__eyebrow:not(.no-draft),
-body.preview-mode .shop-preview__tag:not(.no-draft),
-
-/* Page heads — blur label + sub, keep title crisp */
-body.preview-mode .page-head__label:not(.no-draft),
-body.preview-mode .page-head__sub:not(.no-draft),
-
-/* Manifesto / CTA copy */
-body.preview-mode .manifesto__title:not(.no-draft),
-body.preview-mode .manifesto__sub:not(.no-draft),
-body.preview-mode .manifesto__eyebrow:not(.no-draft),
-
-/* Gallery / spotlights */
-body.preview-mode .gallery-card__title:not(.no-draft),
-body.preview-mode .gallery-card__deck:not(.no-draft),
-body.preview-mode .gallery-card__meta:not(.no-draft),
-body.preview-mode .gallery-card__byline:not(.no-draft),
-
-/* Article modal when opened */
-body.preview-mode .article-modal__title:not(.no-draft),
-body.preview-mode .article-modal__deck:not(.no-draft),
-body.preview-mode .article-modal__body:not(.no-draft),
-body.preview-mode .article-modal__meta:not(.no-draft),
-body.preview-mode .article-modal__eyebrow:not(.no-draft),
-
-/* Footer copy */
-body.preview-mode .footer__tag:not(.no-draft),
-body.preview-mode .footer__bottom:not(.no-draft) {
-  filter: none;
-  opacity: 1;
-  transition: filter 0.25s ease, opacity 0.25s ease;
-}
-
-/* Large-title override — DISABLED 2026-04-23 (was filter: blur(9px)). */
-body.preview-mode .rs-card__title:not(.no-draft),
-body.preview-mode .rs-lead__title:not(.no-draft),
-body.preview-mode .rs-event__title:not(.no-draft),
-body.preview-mode .shop-card__title:not(.no-draft),
-body.preview-mode .shop-hero__label:not(.no-draft),
-body.preview-mode .shop-preview__name:not(.no-draft),
-body.preview-mode .manifesto__title:not(.no-draft),
-body.preview-mode .article-modal__title:not(.no-draft),
-body.preview-mode .gallery-card__title:not(.no-draft) {
-  filter: none;
-}
-
-/* No hover-to-peek — the toggle button in the corner is the only way
-   to reveal full copy. Keeps the "this is a placeholder" signal clean. */
-
-/* Client-facing toggle pill: fixed bottom-right, reveals full copy */
-.preview-toggle {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: 9999;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--pink);
-  color: var(--black);
-  border: 2px solid var(--black);
-  font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--pink);
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.preview-toggle:hover {
-  transform: translateY(-2px);
-  background: #ff4aa3;
-}
-
-.preview-toggle::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--black);
-  border-radius: 50%;
-}
-
-/* Legacy preview banner — removed from v9.55 onward in favor of the
-   .preview-pill in the floating bottom-right stack. Kept hidden so any
-   stale cached markup doesn't reflow the page. */
-.preview-banner { display: none !important; }
-/* The old pink banner used to push the nav and overlays down 36/52px.
-   Banner is gone — reset every offset back to 0 so the nav sits flush
-   at the top of the viewport. */
-body.preview-mode { padding-top: 0 !important; }
-body.preview-mode .nav { top: 0 !important; }
-body.preview-mode .cart-drawer {
-  top: 0 !important;
-  height: 100dvh !important;
-}
-body.preview-mode .cart-backdrop { top: 0 !important; }
-
-/* Hide toggle + banner when NOT in preview mode (default for you) */
-body:not(.preview-mode) .preview-toggle,
-body:not(.preview-mode) .preview-banner {
-  display: none;
-}
-
-/* Mobile tweaks */
-@media (max-width: 640px) {
-  .preview-toggle {
-    right: 12px;
-    bottom: 12px;
-    padding: 8px 12px;
-    font-size: 11px;
-  }
-  .preview-banner {
-    font-size: 10px;
-    padding: 6px 12px;
-    letter-spacing: 0.08em;
-  }
-}
-
-/* ===== CLIENT-FACING UN-BLUR TOGGLE — PERMANENTLY HIDDEN =====
-   v9-preview locks the placeholder blur on. No toggle button, no peek.
-   Defensive rule in case old cached shared.js briefly injects the button
-   before the new JS can remove it. */
-.preview-toggle { display: none !important; }
-
 /* ============================================
    STROKE UTILITIES — opt-in outlined treatments
    Per DESIGN.md type spec. Default treatment is FILL (solid). Apply these
@@ -4278,7 +4089,6 @@ p.footer__tag,
   letter-spacing: -0.015em;
   line-height: 1.5;
 }
-
 
 /* === Sold-out treatment for shop cards === */
 .shop-card--sold-out {
@@ -4442,108 +4252,6 @@ body.theme-light .ticker .dot { color: #FF1A8C !important; }
      - theme-toggle  (middle)         — only on pages w/ variant-toggle
      - preview-pill  (top, always)    — status indicator
    No overlap, no layout shift when any label toggles. On pages that mark
-   <body data-bottom-ticker>, the entire stack lifts 72px clear of the
-   ticker. Uses :has() to recompute preview-pill's position based on what
-   else is in the stack on this page.
-   ============================================================ */
-.preview-pill,
-.theme-toggle,
-.variant-toggle {
-  position: fixed;
-  right: 14px;
-  z-index: 100;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 26, 140, 0.4);
-  color: #FF1A8C;
-  font-family: 'Helvetica Rounded Bold', Helvetica, Arial, sans-serif;
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  padding: 8px 14px;
-  border-radius: 100px;
-  text-decoration: none;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  /* Lock width so toggling the label can never shift the left edge */
-  min-width: 150px;
-  text-align: center;
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.theme-toggle,
-.variant-toggle { cursor: pointer; }
-.variant-toggle { min-width: 240px; }
-.preview-pill   { min-width: 110px; cursor: default; gap: 8px; pointer-events: none; }
-
-/* Green status dot inside the preview pill */
-.preview-pill__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #25D366;          /* WhatsApp/recording-style green */
-  box-shadow: 0 0 6px rgba(37, 211, 102, 0.7);
-  flex: 0 0 auto;
-  animation: preview-pill-pulse 2.4s ease-in-out infinite;
-}
-@keyframes preview-pill-pulse {
-  0%, 100% { opacity: 1;   transform: scale(1); }
-  50%      { opacity: 0.55; transform: scale(0.85); }
-}
-.preview-pill__label { letter-spacing: 2.5px; }
-
-/* Stack positions (no ticker). Variant on bottom, theme middle, preview top. */
-.variant-toggle { bottom: 14px; }
-.theme-toggle   { bottom: 56px; }
-.preview-pill   { bottom: 14px; }
-/* When this page has a theme-toggle (i.e. home / home-locked), preview-pill
-   sits above it — bottom: 56 + theme stack offset. */
-body:has(.theme-toggle) .preview-pill { bottom: 98px; }
-
-/* Pages with a fixed bottom ticker — lift entire stack 72px */
-body[data-bottom-ticker] .variant-toggle { bottom: 86px; }
-body[data-bottom-ticker] .theme-toggle   { bottom: 128px; }
-body[data-bottom-ticker] .preview-pill   { bottom: 86px; }
-body[data-bottom-ticker]:has(.theme-toggle) .preview-pill { bottom: 170px; }
-
-.theme-toggle:hover,
-.variant-toggle:hover { background: #FF1A8C; color: #fff; }
-
-body.theme-light .preview-pill,
-body.theme-light .theme-toggle,
-body.theme-light .variant-toggle {
-  background: rgba(255,255,255,0.85);
-  color: #FF1A8C;
-  border-color: #FF1A8C;
-}
-
-@media (max-width: 640px) {
-  .preview-pill,
-  .theme-toggle,
-  .variant-toggle {
-    right: 10px;
-    padding: 7px 11px;
-    font-size: 9px;
-    letter-spacing: 2px;
-  }
-  .theme-toggle   { min-width: 130px; }
-  .variant-toggle { min-width: 210px; }
-  .preview-pill   { min-width: 96px; gap: 6px; }
-  .preview-pill__dot { width: 7px; height: 7px; }
-  .variant-toggle { bottom: 10px; }
-  .theme-toggle   { bottom: 48px; }
-  .preview-pill   { bottom: 10px; }
-  body:has(.theme-toggle) .preview-pill { bottom: 86px; }
-  body[data-bottom-ticker] .variant-toggle { bottom: 82px; }
-  body[data-bottom-ticker] .theme-toggle   { bottom: 120px; }
-  body[data-bottom-ticker] .preview-pill   { bottom: 82px; }
-  body[data-bottom-ticker]:has(.theme-toggle) .preview-pill { bottom: 158px; }
-}
-
-/* Preview banner — pink bg in both themes; text already on top */
-body.theme-light .preview-banner { background: #FF1A8C !important; color: #ffffff !important; }
 
 /* ============================================================
    LIGHT THEME PATCHES (per Frank)
@@ -4932,7 +4640,6 @@ body.theme-light .cart-drawer .cart-drawer__line .val {
   color: #444444 !important;
 }
 
-
 /* === LIGHT THEME — IG CTA banner: all text black (Frank — "doesn't look good
    in the white version"). Eyebrow and the @sexi.pr link were pink; everything
    else stays as-is. Dark theme untouched. === */
@@ -4952,7 +4659,6 @@ body.theme-light .manifesto.manifesto--preview .manifesto__sub,
 body.theme-light .manifesto--preview .manifesto__sub {
   color: #000000 !important;
 }
-
 
 /* === Product carousel — invisible left/right click zones (desktop only) ===
    On computers there's no swipe; clicking the left/right half of the photo
@@ -4980,7 +4686,6 @@ body.theme-light .manifesto--preview .manifesto__sub {
   /* Touch devices / phones: rely on swipe gesture, not click zones */
   .product-nav { display: none; }
 }
-
 
 /* === Product photo lightbox — opens when user clicks the center 60% of a slide === */
 .article-modal.is-product .product-slide img {
@@ -5036,7 +4741,6 @@ body.theme-light .manifesto--preview .manifesto__sub {
   .article-modal.is-product .product-slide img { cursor: default; }
 }
 
-
 /* === Footer copyright x-mark accent — standard brand mark rules,
    only nudge top + center horizontally because the X is uppercase here. === */
 .footer__bottom .x-mark { line-height: 1; }
@@ -5046,7 +4750,6 @@ body.theme-light .manifesto--preview .manifesto__sub {
   font-size: 0.95em;
   transform: translate(-50%, 0) rotate(-4deg);
 }
-
 
 /* === Phone hero corners — bump top labels up so they hug the nav (Drive change #12) === */
 @media (max-width: 640px) {
