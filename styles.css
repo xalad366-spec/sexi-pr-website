@@ -4198,7 +4198,7 @@ body.theme-light .footer__col a,
 body.theme-light .footer__bottom { color: #000000 !important; }
 body.theme-light .footer__brand .x-mark,
 body.theme-light .footer__bottom .pink,
-body.theme-light .footer__bottom .x-mark { color: #FF1A8C !important; }
+body.theme-light .footer__bottom .x-mark { color: #000000 !important; }
 
 /* Cart drawer */
 body.theme-light .cart-drawer {
@@ -4318,11 +4318,11 @@ body.theme-light .footer__brand .x-mark,
 body.theme-light .footer__brand .x-mark::after {
   color: #FF1A8C !important;
 }
-/* Also keep the inline footer "sexí studios" wordmark pink */
+/* Inline footer "sexí studios" wordmark → black per Frank's design (final). */
 body.theme-light .footer__tag span,
 body.theme-light .footer__tag .x-mark,
 body.theme-light .footer__tag .x-mark::after {
-  color: #FF1A8C !important;
+  color: #000000 !important;
 }
 
 /* === LIGHT THEME — restore manifesto halftone "sexí" wordmark texture ===
