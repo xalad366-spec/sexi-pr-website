@@ -2579,6 +2579,8 @@ body.modal-open { overflow: hidden; }
   border-radius: 0;
   line-height: 1;
 }
+/* Hide the badge when there's no count (cart is empty). */
+.cart-drawer__count:empty { display: none !important; }
 .cart-drawer__close {
   width: 36px; height: 36px;
   border: 1px solid var(--line);

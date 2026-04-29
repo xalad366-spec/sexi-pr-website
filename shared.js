@@ -934,9 +934,10 @@
     if (!toast) {
       toast = document.createElement('div');
       toast.className = 'cart-toast';
-      // Click → open cart drawer (toast stays visible the same duration)
+      // Click → close any open product modal, then open cart drawer
       toast.addEventListener('click', () => {
         toast.classList.remove('is-show');
+        if (typeof closeModal === 'function') closeModal();
         openCart();
       });
       document.body.appendChild(toast);
