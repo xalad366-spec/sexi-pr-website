@@ -4600,6 +4600,10 @@ body.theme-light .cart-drawer .cart-drawer__title .cart-drawer__count {
   justify-content: center !important;
   min-width: 22px !important;
 }
+/* Hide the badge when empty (overrides display: inline-flex above). */
+body.theme-light .cart-drawer .cart-drawer__title .cart-drawer__count:empty {
+  display: none !important;
+}
 
 /* Cart line item: name (the " hat" / " tee" text after pink wordmark) */
 body.theme-light .cart-drawer .cart-item .cart-item__name {
