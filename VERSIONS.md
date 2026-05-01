@@ -1,12 +1,15 @@
 # sexí — versions
 
-The current state of `main` is **v1.0** — the final light-only product.
+The current state of `main` is **v1.1** — color variants release (light-only product, Color option added to Tainas tee).
+
+v1.0 is the previous tagged release before color variants.
 
 ## Tag conventions
 
 | Tag                              | What it points to                              | Notes |
 | -------------------------------- | ---------------------------------------------- | ----- |
-| `v1.0`                           | The official v1.0 release of the live site     | Light mode only, final product, this is what's deployed at sexi-pr.pages.dev |
+| `v1.1`                           | Color variants release                         | Tainas tee gets Color (Black/White/Cream) — 12 variants. shared.js + modal support 2D variant lookup. Cart-line identity now includes color. |
+| `v1.0`                           | First official release of the live site        | Light mode only, single-variant product modal. Last commit before color variants landed. |
 | `v1.0-dark`                      | The prototype-phase snapshot (dark default + theme toggle + locked variant) | Same content as `archive/dark-final-2026-04-28`, just renamed in the v1.x family |
 | `archive/dark-final-2026-04-28`  | Same as `v1.0-dark`                            | Historical name, kept for reference |
 
