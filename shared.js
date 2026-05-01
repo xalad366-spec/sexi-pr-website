@@ -256,7 +256,7 @@
       console.error('[sexi] Storefront token missing — set window.__sexiShopConfig in the page <head>');
       return Promise.resolve([]);
     }
-    var query = '{ products(first: 50) { edges { node { id handle title descriptionHtml availableForSale productType tags priceRange { minVariantPrice { amount currencyCode } } featuredImage { url altText } images(first: 12) { edges { node { url altText } } } options { name values } variants(first: 100) { edges { node { id title availableForSale quantityAvailable selectedOptions { name value } price { amount } image { url altText } } } } } } } }';
+    var query = '{ products(first: 50) { edges { node { id handle title descriptionHtml availableForSale productType tags priceRange { minVariantPrice { amount currencyCode } } featuredImage { url altText } images(first: 12) { edges { node { url altText } } } options { name values } variants(first: 100) { edges { node { id title availableForSale selectedOptions { name value } price { amount } image { url altText } } } } } } } }';
     return fetch('https://' + shop + '/api/' + apiVersion + '/graphql.json', {
       method: 'POST',
       headers: {
