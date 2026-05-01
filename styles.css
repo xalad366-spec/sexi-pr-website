@@ -4774,3 +4774,94 @@ body.theme-light .manifesto--preview .manifesto__sub {
   left: 58%;
   font-size: 0.95em;
 }
+
+/* === Product modal: COLOR swatches (Drive change #14) ===
+   Color picker for products with multiple color variants. Each swatch is
+   a pill-shaped chip with a filled color dot + the color name. Selected
+   chip gets a pink ring. Clicking swaps the modal hero photo + the
+   variantId on the Add to Cart button. */
+.article-modal.is-product .article-modal__colors {
+  margin: 0 0 18px 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: center;
+}
+.article-modal.is-product .article-modal__colors legend {
+  font-family: 'Helvetica Rounded Bold', 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.6);
+  margin-right: 12px;
+  padding: 0;
+  float: none;
+}
+.article-modal.is-product .article-modal__color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+  background: transparent;
+  user-select: none;
+}
+.article-modal.is-product .article-modal__color:hover {
+  border-color: rgba(0,0,0,0.45);
+}
+.article-modal.is-product .article-modal__color.is-active {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 1px var(--pink);
+}
+.article-modal.is-product .article-modal__color input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.article-modal.is-product .article-modal__color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #888;
+  border: 1px solid rgba(0,0,0,0.18);
+  flex: 0 0 22px;
+  display: inline-block;
+}
+.article-modal.is-product .article-modal__color-name {
+  font-family: 'Helvetica Rounded Bold', 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: lowercase;
+  color: #000;
+}
+
+@media (max-width: 640px) {
+  .article-modal.is-product .article-modal__colors {
+    margin: 0 0 12px 0;
+    gap: 8px 10px;
+  }
+  .article-modal.is-product .article-modal__colors legend {
+    font-size: 10px;
+    margin-right: 8px;
+  }
+  .article-modal.is-product .article-modal__color {
+    padding: 4px 12px 4px 5px;
+  }
+  .article-modal.is-product .article-modal__color-dot {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+  }
+  .article-modal.is-product .article-modal__color-name {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+}

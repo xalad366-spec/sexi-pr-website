@@ -138,21 +138,36 @@
     function numericVariantId(gid) {
       return String(gid || '').split('/').pop();
     }
-    // Build size -> variantId map
+    // Build 2D variantMap: { color: { size: variantId } }
+    // Products without a Color option use '__default__' as the color key.
     var variantMap = {};
-    var sizes = [];
+    var colors = [];          // ordered list of unique color values
+    var colorImages = {};     // color -> first variant image URL
+    var sizesByColor = {};    // color -> array of sizes seen
     variants.forEach(function (v) {
       var opts = v.selectedOptions || [];
       var sizeOpt = opts.find(function (o) { return /talla|size/i.test(o.name); });
+      var colorOpt = opts.find(function (o) { return /color|colour/i.test(o.name); });
       var sizeName = sizeOpt ? sizeOpt.value : 'única';
-      if (sizeName === 'Default Title') {
-        variantMap['única'] = numericVariantId(v.id);
-        if (sizes.indexOf('única') === -1) sizes.push('única');
-      } else {
-        variantMap[sizeName] = numericVariantId(v.id);
-        sizes.push(sizeName);
+      if (sizeName === 'Default Title') sizeName = 'única';
+      var colorName = colorOpt ? colorOpt.value : '__default__';
+      if (!variantMap[colorName]) variantMap[colorName] = {};
+      variantMap[colorName][sizeName] = numericVariantId(v.id);
+      if (colorName !== '__default__' && colors.indexOf(colorName) === -1) {
+        colors.push(colorName);
+      }
+      if (colorName !== '__default__' && v.image && v.image.url && !colorImages[colorName]) {
+        colorImages[colorName] = v.image.url;
+      }
+      if (!sizesByColor[colorName]) sizesByColor[colorName] = [];
+      if (sizesByColor[colorName].indexOf(sizeName) === -1) {
+        sizesByColor[colorName].push(sizeName);
       }
     });
+    // Canonical sizes: prefer first color's sizes (assume all colors share sizes)
+    var sizes = colors.length
+      ? (sizesByColor[colors[0]] || [])
+      : (sizesByColor['__default__'] || []);
     var sortOrder = { XS: 0, S: 1, M: 2, L: 3, XL: 4, XXL: 5, 'única': 99 };
     sizes.sort(function (a, b) {
       var oa = sortOrder[a] != null ? sortOrder[a] : 50;
@@ -200,9 +215,38 @@
       visible: true,
       description: descText,
       shopify_handle: handle,
-      shopify_variants: variantMap
+      shopify_variants: variantMap,
+      colors: colors,
+      color_images: colorImages
     };
   }
+  // Resolve a Shopify variantId from a (color, size) pair.
+  // Handles both new 2D map ({Black: {S: id}}) and legacy 1D map ({S: id}).
+  function resolveVariantId(meta, color, size) {
+    if (!meta || !meta.variants) return null;
+    var v = meta.variants;
+    var sizeKey = size || 'única';
+    if (color && v[color] && typeof v[color] === 'object') {
+      return v[color][sizeKey] || v[color]['única'] || Object.values(v[color])[0];
+    }
+    if (v['__default__'] && typeof v['__default__'] === 'object') {
+      return v['__default__'][sizeKey] || v['__default__']['única'] || Object.values(v['__default__'])[0];
+    }
+    if (typeof v[sizeKey] === 'string') return v[sizeKey];
+    if (typeof v['única'] === 'string') return v['única'];
+    if (typeof v['default'] === 'string') return v['default'];
+    var keys = Object.keys(v);
+    for (var i = 0; i < keys.length; i++) {
+      var val = v[keys[i]];
+      if (typeof val === 'string') return val;
+      if (typeof val === 'object') {
+        var subVals = Object.values(val);
+        if (subVals.length) return subVals[0];
+      }
+    }
+    return null;
+  }
+  window.__sexiResolveVariantId = resolveVariantId;
   function fetchShopifyProducts() {
     var cfg = window.__sexiShopConfig || {};
     var shop = cfg.shopify_shop || 'sexipr.myshopify.com';
@@ -212,7 +256,7 @@
       console.error('[sexi] Storefront token missing — set window.__sexiShopConfig in the page <head>');
       return Promise.resolve([]);
     }
-    var query = '{ products(first: 50) { edges { node { id handle title descriptionHtml availableForSale productType tags priceRange { minVariantPrice { amount currencyCode } } featuredImage { url altText } images(first: 8) { edges { node { url altText } } } variants(first: 20) { edges { node { id title availableForSale selectedOptions { name value } price { amount } } } } } } } }';
+    var query = '{ products(first: 50) { edges { node { id handle title descriptionHtml availableForSale productType tags priceRange { minVariantPrice { amount currencyCode } } featuredImage { url altText } images(first: 12) { edges { node { url altText } } } options { name values } variants(first: 100) { edges { node { id title availableForSale quantityAvailable selectedOptions { name value } price { amount } image { url altText } } } } } } } }';
     return fetch('https://' + shop + '/api/' + apiVersion + '/graphql.json', {
       method: 'POST',
       headers: {
@@ -249,6 +293,8 @@
       + ' data-product-price="' + priceStr + '"'
       + ' data-product-thumb="' + escapeAttr(p.thumbnail || '') + '"'
       + ' data-product-sizes="' + escapeAttr(sizes) + '"'
+      + ' data-product-colors="' + escapeAttr((p.colors || []).join(',')) + '"'
+      + ' data-product-color-images="' + escapeAttr(JSON.stringify(p.color_images || {})) + '"'
       + ' data-article-title="' + escapeAttr(titleHtml) + '"'
       + ' data-article-thumb="' + escapeAttr(p.thumbnail || '') + '"'
       + ' data-article-gallery="' + escapeAttr(gallery) + '"'
@@ -278,7 +324,9 @@
         products.forEach(function (p) {
           window.__sexiProductSlugs[p.id] = {
             handle: p.shopify_handle,
-            variants: p.shopify_variants
+            variants: p.shopify_variants,
+            colors: p.colors || [],
+            color_images: p.color_images || {}
           };
         });
         // Render the grid only if this page has one (tienda)
@@ -583,8 +631,38 @@
       const pprice = card.getAttribute('data-product-price') || '0';
       const pthumb = card.getAttribute('data-product-thumb') || img;
       const sizes = (card.getAttribute('data-product-sizes') || 'única').split(',').map(s => s.trim()).filter(Boolean);
+      const colors = (card.getAttribute('data-product-colors') || '').split(',').map(s => s.trim()).filter(Boolean);
+      let colorImages = {};
+      try { colorImages = JSON.parse(card.getAttribute('data-product-color-images') || '{}'); } catch (_) {}
+      function colorToSwatch(name) {
+        var n = String(name).toLowerCase();
+        var map = {
+          'black': '#000000', 'negro': '#000000',
+          'white': '#ffffff', 'blanco': '#ffffff',
+          'cream': '#f4ead5', 'crema': '#f4ead5',
+          'pink': '#FF1A8C', 'rosa': '#FF1A8C',
+          'sand': '#e6dcc4', 'arena': '#e6dcc4',
+          'gray': '#888888', 'grey': '#888888', 'gris': '#888888',
+          'red': '#d61c1c', 'rojo': '#d61c1c',
+          'blue': '#2a3d99', 'azul': '#2a3d99',
+          'green': '#2f8f3a', 'verde': '#2f8f3a'
+        };
+        return map[n] || '#888888';
+      }
       buyEl.innerHTML = [
         '<p class="article-modal__price">$' + parseFloat(pprice).toFixed(2) + '</p>',
+        colors.length > 0 ? [
+          '<fieldset class="article-modal__colors">',
+          '<legend>color</legend>',
+          colors.map((c, i) =>
+            '<label class="article-modal__color' + (i === 0 ? ' is-active' : '') + '" title="' + c + '">' +
+              '<input type="radio" name="modal-color" value="' + c + '"' + (i === 0 ? ' checked' : '') + '>' +
+              '<span class="article-modal__color-dot" style="background:' + colorToSwatch(c) + '"></span>' +
+              '<span class="article-modal__color-name">' + c.toLowerCase() + '</span>' +
+            '</label>'
+          ).join(''),
+          '</fieldset>'
+        ].join('') : '',
         sizes.length > 1 ? [
           '<fieldset class="article-modal__sizes">',
           '<legend>talla</legend>',
@@ -598,6 +676,25 @@
         ' data-thumb="' + pthumb + '">añadir al carrito</button>'
       ].join('');
       buyEl.style.display = '';
+      // Wire up color swatches: swap thumb image + active class
+      buyEl.querySelectorAll('[name="modal-color"]').forEach(input => {
+        input.addEventListener('change', () => {
+          const newColor = input.value;
+          const newImg = colorImages[newColor];
+          if (newImg) {
+            const thumbImg = modal.querySelector('.article-modal__thumb img');
+            if (thumbImg) thumbImg.src = newImg;
+          }
+          buyEl.querySelectorAll('.article-modal__color').forEach(lbl => {
+            lbl.classList.toggle('is-active', lbl.contains(input));
+          });
+        });
+      });
+      // If first color has its own image, swap to it on open
+      if (colors.length > 0 && colorImages[colors[0]]) {
+        const thumbImg0 = modal.querySelector('.article-modal__thumb img');
+        if (thumbImg0) thumbImg0.src = colorImages[colors[0]];
+      }
     } else if (buyEl) {
       buyEl.style.display = 'none';
     }
@@ -699,8 +796,7 @@
     cart.forEach(function (item) {
       var meta = (window.__sexiProductSlugs && window.__sexiProductSlugs[item.id]) || null;
       if (meta && typeof meta === 'object' && meta.variants) {
-        var size = item.size || 'única';
-        var vid = meta.variants[size] || meta.variants['default'] || Object.values(meta.variants)[0];
+        var vid = resolveVariantId(meta, item.color, item.size);
         if (vid) parts.push(vid + ':' + (item.qty || 1));
       }
     });
@@ -734,8 +830,7 @@
     cart.forEach(function (item) {
       var meta = (window.__sexiProductSlugs && window.__sexiProductSlugs[item.id]) || null;
       if (meta && typeof meta === 'object' && meta.variants) {
-        var size = item.size || 'única';
-        var vid = meta.variants[size] || meta.variants['default'] || Object.values(meta.variants)[0];
+        var vid = resolveVariantId(meta, item.color, item.size);
         if (vid) lines.push({
           merchandiseId: 'gid://shopify/ProductVariant/' + vid,
           quantity: item.qty || 1,
@@ -793,19 +888,22 @@
   }
   function addToCart(item) {
     const cart = readCart();
-    const existing = cart.find(c => c.id === item.id && c.size === item.size);
+    const itemColor = item.color || '';
+    const existing = cart.find(c => c.id === item.id && c.size === item.size && (c.color || '') === itemColor);
     if (existing) existing.qty = (existing.qty || 1) + 1;
-    else cart.push({ id: item.id, name: item.name, price: item.price, thumb: item.thumb, size: item.size || 'única', qty: 1 });
+    else cart.push({ id: item.id, name: item.name, price: item.price, thumb: item.thumb, size: item.size || 'única', color: itemColor, qty: 1 });
     writeCart(cart);
     showToast('Añadido — ' + item.name);
   }
-  function removeFromCart(id, size) {
-    const cart = readCart().filter(c => !(c.id === id && c.size === size));
+  function removeFromCart(id, size, color) {
+    var c = color || '';
+    const cart = readCart().filter(it => !(it.id === id && it.size === size && (it.color || '') === c));
     writeCart(cart);
   }
-  function setQty(id, size, qty) {
+  function setQty(id, size, qty, color) {
+    var c = color || '';
     const cart = readCart();
-    const item = cart.find(c => c.id === id && c.size === size);
+    const item = cart.find(it => it.id === id && it.size === size && (it.color || '') === c);
     if (!item) return;
     item.qty = Math.max(1, qty);
     writeCart(cart);
@@ -849,14 +947,14 @@
         '      <p class="cart-item__name">' + wordmarkify(it.name) + '</p>',
         '      <p class="cart-item__price">$' + (it.price * it.qty).toFixed(2) + '</p>',
         '    </div>',
-        '    <p class="cart-item__meta">talla · ' + escapeHtml(it.size) + '</p>',
+        '    <p class="cart-item__meta">' + (it.color ? escapeHtml(String(it.color).toLowerCase()) + ' · ' : '') + 'talla · ' + escapeHtml(it.size) + '</p>',
         '    <div class="cart-item__actions">',
-        '      <div class="cart-item__qty" data-id="' + it.id + '" data-size="' + it.size + '">',
+        '      <div class="cart-item__qty" data-id="' + it.id + '" data-size="' + it.size + '" data-color="' + escapeHtml(it.color || '') + '">',
         '        <button type="button" data-qty="dec" aria-label="Menos">−</button>',
         '        <span>' + it.qty + '</span>',
         '        <button type="button" data-qty="inc" aria-label="Más">+</button>',
         '      </div>',
-        '      <button type="button" class="cart-item__remove" data-remove="' + it.id + '|' + it.size + '">quitar</button>',
+        '      <button type="button" class="cart-item__remove" data-remove="' + it.id + '|' + it.size + '|' + escapeHtml(it.color || '') + '">quitar</button>',
         '    </div>',
         '  </div>',
         '</div>'
@@ -987,21 +1085,22 @@
       e.preventDefault();
       const parent = qtyBtn.closest('[data-id]');
       if (!parent) return;
-      const id = parent.dataset.id, size = parent.dataset.size;
+      const id = parent.dataset.id, size = parent.dataset.size, color = parent.dataset.color || '';
       const cart = readCart();
-      const item = cart.find(c => c.id === id && c.size === size);
+      const item = cart.find(c => c.id === id && c.size === size && (c.color || '') === color);
       if (!item) return;
       const next = (item.qty || 1) + (qtyBtn.dataset.qty === 'inc' ? 1 : -1);
-      if (next < 1) removeFromCart(id, size);
-      else setQty(id, size, next);
+      if (next < 1) removeFromCart(id, size, color);
+      else setQty(id, size, next, color);
       return;
     }
     // Remove
     const rm = e.target.closest('[data-remove]');
     if (rm) {
       e.preventDefault();
-      const [id, size] = rm.getAttribute('data-remove').split('|');
-      removeFromCart(id, size);
+      const parts = rm.getAttribute('data-remove').split('|');
+      const [id, size, color] = parts;
+      removeFromCart(id, size, color || '');
       return;
     }
     // Add to cart quick button (from product grid)
@@ -1038,7 +1137,17 @@
       const thumb = modalAdd.getAttribute('data-thumb');
       const sizeEl = document.querySelector('[name="modal-size"]:checked');
       const size = sizeEl ? sizeEl.value : 'única';
-      addToCart({ id, name, price, thumb, size });
+      const colorEl = document.querySelector('[name="modal-color"]:checked');
+      const color = colorEl ? colorEl.value : '';
+      let cartThumb = thumb;
+      const card = document.querySelector('[data-product-id="' + id + '"]');
+      if (card && color) {
+        try {
+          const map = JSON.parse(card.getAttribute('data-product-color-images') || '{}');
+          if (map[color]) cartThumb = map[color];
+        } catch (_) {}
+      }
+      addToCart({ id, name, price, thumb: cartThumb, size, color });
       return;
     }
   });
