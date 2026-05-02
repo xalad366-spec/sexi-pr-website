@@ -655,10 +655,8 @@
           '<fieldset class="article-modal__colors">',
           '<legend>color</legend>',
           colors.map((c, i) =>
-            '<label class="article-modal__color' + (i === 0 ? ' is-active' : '') + '" title="' + c + '">' +
+            '<label class="article-modal__color' + (i === 0 ? ' is-active' : '') + '" title="' + c + '" style="background:' + colorToSwatch(c) + '">' +
               '<input type="radio" name="modal-color" value="' + c + '"' + (i === 0 ? ' checked' : '') + '>' +
-              '<span class="article-modal__color-dot" style="background:' + colorToSwatch(c) + '"></span>' +
-              '<span class="article-modal__color-name">' + c.toLowerCase() + '</span>' +
             '</label>'
           ).join(''),
           '</fieldset>'
