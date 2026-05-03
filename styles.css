@@ -4831,7 +4831,7 @@ body.theme-light .manifesto--preview .manifesto__sub {
 
 @media (max-width: 640px) {
   .article-modal.is-product .article-modal__colors {
-    margin: 0 0 12px 0;
+    margin: 0 0 12px 33px;
     gap: 6px;
   }
   .article-modal.is-product .article-modal__colors legend {
