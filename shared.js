@@ -200,7 +200,13 @@
     // Description: Shopify gives HTML. Strip tags for safe display in cards;
     // pass full HTML to the modal via descriptionHtml. Keep both flavors.
     var descHtml = node.descriptionHtml || '';
-    var descText = descHtml.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    var descText = descHtml
+      .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/[ \t\xa0]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
     return {
       id: handle,
       name: title,
